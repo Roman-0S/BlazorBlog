@@ -1,6 +1,9 @@
+using BlazorBlog.Client.Services.Interfaces;
 using BlazorBlog.Components;
 using BlazorBlog.Components.Account;
 using BlazorBlog.Data;
+using BlazorBlog.Services;
+using BlazorBlog.Services.Interfaces;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -40,6 +43,10 @@ builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.Requ
     .AddDefaultTokenProviders();
 
 builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
+
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+
+builder.Services.AddScoped<ICategoryDTOService, CategoryDTOService>();
 
 
 

@@ -26,6 +26,7 @@ namespace BlazorBlog.Models
 
             foreach (BlogPost post in tag.Posts)
             {
+                post.Tags.Clear();
                 dto.Posts.Add(post.ToDTO());
             }
 

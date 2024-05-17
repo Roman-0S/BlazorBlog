@@ -1,0 +1,164 @@
+﻿@page "/categories"
+
+@using BlazorBlog.Client.Services.Interfaces
+@using BlazorBlog.Client.Helpers
+
+@rendermode InteractiveServer
+
+@inject ICategoryDTOService CategoryService
+
+
+<div>
+
+    <EditForm Model="formCategory" OnValidSubmit="HandleSubmit">
+
+        <ul class="list-group my-3">
+
+            <li class="list-group-item">
+
+                <label class="form-label" for="categoryName">
+                    Add a Category
+                </label>
+
+                <div class="d-flex gap-3">
+
+                    <InputText class="form-control" placeholder="Category Name" @bind-Value="formCategory.Name" id="categoryName" />
+
+
+                </div>
+
+            </li>
+
+            <li class="list-group-item mb-5">
+
+                <label class="form-label" for="categoryDescription">
+                    Add a Description
+                </label>
+
+                <div class="d-flex gap-3">
+
+                    <InputText class="form-control" placeholder="Category Description" @bind-Value="formCategory.Description" id="categoryDescription" />
+
+
+
+                </div>
+
+            </li>
+
+            <li class="list-group-item">
+
+                <div>
+
+                    <img src="@(string.IsNullOrEmpty(formCategory.ImageURL) ? ImageHelper.DefaultCategoryImage : formCategory.ImageURL)" />
+
+                </div>
+
+                <div>
+
+                    <InputFile OnChange="OnFileChange" class="form-control mt-2" accept=".png, .jpg, .jpeg, .svg" />
+
+                    <span class="text-danger">@imageError</span>
+
+                </div>
+
+            </li>
+
+        </ul>
+
+            <button class="btn btn-primary btn-sm">
+
+                <i class="ai ai-save"></i>
+
+            </button>
+
+    </EditForm>
+
+    <hr class="my-5" />
+
+    <div class="mt-5">
+
+        @foreach (CategoryDTO category in categories)
+        {
+            <div>@category.Name</div>
+
+            <div><img src="@category.ImageURL" /></div>
+
+            <div><b>@category.Description</b></div>
+        }
+
+    </div>
+
+</div>
+
+
+
+@code {
+    #region parameters
+
+
+
+    #endregion
+
+
+    #region state
+
+    private CategoryDTO formCategory = new();
+
+    private IEnumerable<CategoryDTO> categories = [];
+
+    private string? imageError;
+
+    #endregion
+
+
+    #region methods
+
+    protected override async Task OnInitializedAsync()
+    {
+        categories = await CategoryService.GetCategoriesAsync();
+    }
+
+    private async Task HandleSubmit()
+    {
+        try
+        {
+            await CategoryService.CreateCategoryAsync(formCategory);
+
+            categories = await CategoryService.GetCategoriesAsync();
+
+            formCategory = new();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            throw;
+        }
+    }
+
+    private async Task OnFileChange(InputFileChangeEventArgs changeEvent)
+    {
+        if (changeEvent.File is null)
+        {
+            formCategory.ImageURL = ImageHelper.DefaultCategoryImage;
+        }
+        else if (changeEvent.File.Size > ImageHelper.MaxFileSize)
+        {
+            imageError = "Images must be less than 5 MB";
+        }
+        else
+        {
+            try
+            {
+                formCategory.ImageURL = await ImageHelper.GetDataUrl(changeEvent.File);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                imageError = "Could not read the selected file. Please select a different image";
+            }
+        }
+    }
+
+    #endregion
+
+}
