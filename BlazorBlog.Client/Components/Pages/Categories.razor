@@ -1,5 +1,6 @@
 ﻿@page "/categories"
 
+@using BlazorBlog.Client.Components.UI.Categories
 @using BlazorBlog.Client.Services.Interfaces
 @using BlazorBlog.Client.Helpers
 
@@ -10,68 +11,19 @@
 
 <div>
 
-    <EditForm Model="formCategory" OnValidSubmit="HandleSubmit">
+    <div class="mb-3 hstack justify-content-between">
 
-        <ul class="list-group my-3">
+        <h1 class="display-5">Categories</h1>
 
-            <li class="list-group-item">
+        <a class="btn btn-primary" role="button" data-bs-toggle="collapse" href="#collapseForm" aria-expaned="false" aria-controls="collapseForm">Add a Category</a>
 
-                <label class="form-label" for="categoryName">
-                    Add a Category
-                </label>
+    </div>
 
-                <div class="d-flex gap-3">
+    <div class="collapse" id="collapseForm">
 
-                    <InputText class="form-control" placeholder="Category Name" @bind-Value="formCategory.Name" id="categoryName" />
+        <CategoryForm Category="new CategoryDTO()" OnSubmit="HandleSubmit" OnCancel="HandleCancel" />
 
-
-                </div>
-
-            </li>
-
-            <li class="list-group-item mb-5">
-
-                <label class="form-label" for="categoryDescription">
-                    Add a Description
-                </label>
-
-                <div class="d-flex gap-3">
-
-                    <InputText class="form-control" placeholder="Category Description" @bind-Value="formCategory.Description" id="categoryDescription" />
-
-
-
-                </div>
-
-            </li>
-
-            <li class="list-group-item">
-
-                <div>
-
-                    <img src="@(string.IsNullOrEmpty(formCategory.ImageURL) ? ImageHelper.DefaultCategoryImage : formCategory.ImageURL)" />
-
-                </div>
-
-                <div>
-
-                    <InputFile OnChange="OnFileChange" class="form-control mt-2" accept=".png, .jpg, .jpeg, .svg" />
-
-                    <span class="text-danger">@imageError</span>
-
-                </div>
-
-            </li>
-
-        </ul>
-
-            <button class="btn btn-primary btn-sm">
-
-                <i class="ai ai-save"></i>
-
-            </button>
-
-    </EditForm>
+    </div>
 
     <hr class="my-5" />
 
@@ -79,11 +31,11 @@
 
         @foreach (CategoryDTO category in categories)
         {
-            <div>@category.Name</div>
+            <div class="mb-4">
 
-            <div><img src="@category.ImageURL" /></div>
+                <CategoryCard Category="category" OnCategoryDelete="DeleteCategory" OnCategoryUpdate="UpdateCategory" />
 
-            <div><b>@category.Description</b></div>
+            </div>
         }
 
     </div>
@@ -102,11 +54,7 @@
 
     #region state
 
-    private CategoryDTO formCategory = new();
-
     private IEnumerable<CategoryDTO> categories = [];
-
-    private string? imageError;
 
     #endregion
 
@@ -118,15 +66,13 @@
         categories = await CategoryService.GetCategoriesAsync();
     }
 
-    private async Task HandleSubmit()
+    private async Task HandleSubmit(CategoryDTO category)
     {
         try
         {
-            await CategoryService.CreateCategoryAsync(formCategory);
+            await CategoryService.CreateCategoryAsync(category);
 
             categories = await CategoryService.GetCategoriesAsync();
-
-            formCategory = new();
         }
         catch (Exception ex)
         {
@@ -135,27 +81,38 @@
         }
     }
 
-    private async Task OnFileChange(InputFileChangeEventArgs changeEvent)
+    private void HandleCancel()
     {
-        if (changeEvent.File is null)
+
+    }
+
+    private async Task DeleteCategory(int categoryId)
+    {
+        try
         {
-            formCategory.ImageURL = ImageHelper.DefaultCategoryImage;
+            await CategoryService.DeleteCategoryAsync(categoryId);
+
+            categories = await CategoryService.GetCategoriesAsync();
         }
-        else if (changeEvent.File.Size > ImageHelper.MaxFileSize)
+        catch (Exception ex)
         {
-            imageError = "Images must be less than 5 MB";
+            Console.WriteLine(ex);
+            throw;
         }
-        else
+    }
+
+    private async Task UpdateCategory(CategoryDTO category)
+    {
+        try
         {
-            try
-            {
-                formCategory.ImageURL = await ImageHelper.GetDataUrl(changeEvent.File);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-                imageError = "Could not read the selected file. Please select a different image";
-            }
+            await CategoryService.UpdateCategoryAsync(category);
+
+            categories = await CategoryService.GetCategoriesAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            throw;
         }
     }
 

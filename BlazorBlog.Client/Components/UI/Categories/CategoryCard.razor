@@ -1,0 +1,185 @@
+﻿@using BlazorBlog.Client.Helpers
+
+
+@if (Category is not null)
+{
+
+    @if (status == Status.Viewing)
+    {
+
+        <div>
+
+            <div class="card overflow-hidden">
+
+                <div class="row g-0">
+
+                    <div class="col-sm-4 bg-repeat-0 bg-size-cover" style="background-image: url(@(string.IsNullOrEmpty(Category.ImageURL) ? ImageHelper.DefaultCategoryImage : Category.ImageURL)); min-height: 14rem;"></div>
+
+                    <div class="col-sm-8">
+
+                        <div class="card-body d-flex flex-column">
+
+                            <h4 class="card-title">@Category.Name</h4>
+
+                            <p class="card-text">@Category.Description</p>
+
+                            <div class="hstack gap-2">
+
+                                <a href="#" class="btn btn-primary btn-sm">Browse Posts</a>
+
+                                <button class="btn btn-primary btn-sm" @onclick="() => status = Status.Editing">Edit Category</button>
+
+                                <button class="btn btn-danger btn-sm" @onclick="() => status = Status.Deleting">Delete Category</button>
+
+                            </div>
+
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    }
+    else if (status == Status.Editing)
+    {
+        
+        <CategoryForm Category="Category" OnSubmit="UpdateCategory" OnCancel="HandleCancel" />
+
+    }
+    else if (status == Status.Deleting)
+    {
+
+        <div>
+
+            <div class="card overflow-hidden">
+
+                <div class="row g-0">
+
+                    <div class="col-sm-4 bg-repeat-0 bg-size-cover" style="background-image: url(@(string.IsNullOrEmpty(Category.ImageURL) ? ImageHelper.DefaultCategoryImage : Category.ImageURL)); min-height: 14rem;"></div>
+
+                    <div class="col-sm-8">
+
+                        <div class="card-body">
+
+                            <h4 class="card-title">@Category.Name</h4>
+
+                            <p class="card-text">@Category.Description</p>
+
+                            <div class="hstack gap-2 text-danger">
+
+                                <i class="ai ai-exclamation"></i> Are you sure you want to delete this category?
+
+                                <button class="btn btn-danger btn-sm" @onclick="DeleteCategory">Delete Category</button>
+
+                                <button class="btn btn-outline-dark btn-sm" @onclick="() => status = Status.Viewing">
+
+                                    <i class="ai ai-cross-alt"></i>
+
+                                    Cancel
+
+                                </button>
+
+                            </div>
+
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    }
+
+
+}
+
+@code {
+
+    #region parameters
+
+    [Parameter, EditorRequired]
+    public CategoryDTO? Category { get; set; }
+
+    [Parameter, EditorRequired]
+    public EventCallback<int> OnCategoryDelete { get; set; }
+
+    [Parameter, EditorRequired]
+    public EventCallback<CategoryDTO> OnCategoryUpdate { get; set; }
+
+    #endregion
+
+
+    #region state
+
+    private enum Status
+    {
+        Viewing,
+        Editing,
+        Deleting
+    }
+
+    private Status status = Status.Viewing;
+
+    private string? originalName;
+
+    private string? originalDescription;
+
+    private string? originalImage;
+
+    #endregion
+
+
+    #region methods
+
+    protected override void OnParametersSet()
+    {
+        if (Category is not null)
+        {
+            originalName = Category.Name;
+
+            originalDescription = Category.Description;
+
+            originalImage = Category.ImageURL;
+        }
+    }
+
+    public void HandleCancel()
+    {
+        if (!string.IsNullOrEmpty(originalName))
+        {
+            Category!.Name = originalName;
+
+            Category!.Description = originalDescription;
+
+            Category!.ImageURL = originalImage!;
+        }
+
+        status = Status.Viewing;
+    }
+
+    public async Task UpdateCategory(CategoryDTO category)
+    {
+        await OnCategoryUpdate.InvokeAsync(category);
+
+        status = Status.Viewing;
+    }
+
+    public async Task DeleteCategory()
+    {
+        await OnCategoryDelete.InvokeAsync(Category!.Id);
+
+        status = Status.Viewing;
+    }
+
+    #endregion
+
+}

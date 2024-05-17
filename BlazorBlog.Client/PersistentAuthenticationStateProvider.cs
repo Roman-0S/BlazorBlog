@@ -34,6 +34,7 @@ namespace BlazorBlog.Client
                 new Claim(nameof(UserInfo.FirstName), userInfo.FirstName),
                 new Claim(nameof(UserInfo.LastName), userInfo.LastName),
                 new Claim(nameof(UserInfo.ProfilePictureUrl), userInfo.ProfilePictureUrl),
+                .. userInfo.Roles.Select(role => new Claim(ClaimTypes.Role, role))
 
             ];
 

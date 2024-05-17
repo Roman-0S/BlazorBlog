@@ -101,7 +101,8 @@ namespace BlazorBlog.Components.Account
                         Email = email,
                         FirstName = firstName,
                         LastName = lastName,
-                        ProfilePictureUrl = profilePictureUrl
+                        ProfilePictureUrl = profilePictureUrl,
+                        Roles = [.. principal.FindAll(ClaimTypes.Role).Select(claim => claim.Value)]
                     });
                 }
             }

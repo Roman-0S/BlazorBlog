@@ -7,5 +7,11 @@ namespace BlazorBlog.Client.Services.Interfaces
         Task<CategoryDTO> CreateCategoryAsync(CategoryDTO category);
 
         Task<IEnumerable<CategoryDTO>> GetCategoriesAsync();
+
+        Task<CategoryDTO?> GetCategoryByIdAsync(int categoryId);
+
+        Task UpdateCategoryAsync(CategoryDTO category);
+
+        Task DeleteCategoryAsync(int categoryId);
     }
 }
