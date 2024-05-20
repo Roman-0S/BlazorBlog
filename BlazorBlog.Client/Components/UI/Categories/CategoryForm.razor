@@ -82,7 +82,7 @@
 
                             </button>
 
-                            <button class="btn btn-outline-dark btn-sm" data-bs-toggle="collapse" href="#collapseForm" type="button" @onclick="HandleCancel">
+                            <button class="btn btn-outline-dark btn-sm" data-bs-toggle="collapse" href="#@collapseId" type="button" @onclick="HandleCancel">
 
                                 <i class="ai ai-cross-alt me-2"></i>
 
@@ -112,6 +112,9 @@
 
     [Parameter, EditorRequired]
     public CategoryDTO? Category { get; set; }
+
+    [Parameter, EditorRequired]
+    public string? collapseId { get; set; }
 
     [Parameter, EditorRequired]
     public EventCallback<CategoryDTO> OnSubmit { get; set; }
