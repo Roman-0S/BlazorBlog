@@ -1,10 +1,12 @@
-﻿@page "/categories"
+﻿@page "/author/categories"
 
 @using BlazorBlog.Client.Components.UI.Categories
 @using BlazorBlog.Client.Services.Interfaces
 @using BlazorBlog.Client.Helpers
 
 @rendermode InteractiveServer
+
+@attribute [Authorize(Roles = "Author")]
 
 @inject ICategoryDTOService CategoryService
 

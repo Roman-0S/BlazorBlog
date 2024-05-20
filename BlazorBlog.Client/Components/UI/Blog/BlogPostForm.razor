@@ -1,0 +1,212 @@
+﻿@using BlazorBlog.Client.Helpers
+
+@inject ICategoryDTOService CategoryService
+
+@if (Post is not null)
+{
+
+    <EditForm Model="Post" OnValidSubmit="HandleSubmit" class="row">
+
+        <DataAnnotationsValidator />
+
+        <div class="col-lg-4">
+
+            @* title *@
+
+            <div class="mb-2">
+
+                <label class="form-label" for="postTitle">Title</label>
+
+                <InputText class="form-control" @bind-Value="Post.Title" id="postTitle" />
+
+                <ValidationMessage For="() => Post.Title" />
+
+            </div>
+
+            @* abstract *@
+
+            <div class="mb-2">
+
+                <label class="form-label" for="postAbstract">Abstract</label>
+
+                <InputTextArea class="form-control" @bind-Value="Post.Abstract" rows="3" id="postAbstract"/>
+
+                <ValidationMessage For="() => Post.Abstract" />
+
+            </div>
+
+            @* category *@
+
+            <div class="mb-2">
+
+                <label class="form-label">Category</label>
+
+                <InputSelect class="form-select" @bind-Value="Post.CategoryId" >
+
+                    <option value="">Select a Category</option>
+
+                    @foreach (CategoryDTO category in categories)
+                    {
+                        <option value="@category.Id">
+                            @category.Name
+                        </option>
+                    }
+
+                </InputSelect>
+
+                <ValidationMessage For="() => Post.CategoryId" />
+
+            </div>
+
+            @* image *@
+
+            <div class="mb-2">
+
+                <label class="form-label">Image</label>
+
+                <img class="img-fluid" style="max-height: 350px" src="@(string.IsNullOrEmpty(Post.ImageURL) ? ImageHelper.DefaultBlogImage : Post.ImageURL)" />
+
+                <InputFile OnChange="OnFileChange" class="form-control mt-3" accept=".png, .jpg, .jpeg, .svg" />
+
+                <span class="text-danger">@imageError</span>
+
+            </div>
+
+        </div>
+
+        <div class="col-lg-8 vstack gap-2">
+
+            @* post content *@
+
+            <div class="flex-fill vstack">
+
+                <label class="form-label">Content</label>
+
+                <InputTextArea class="form-control flex-fill" @bind-Value="Post.Content" />
+
+                <ValidationMessage For="() => Post.Content" />
+
+            </div>
+
+            @* tags *@
+
+            <div class="mb-2">
+
+                <label class="form-label">Tags</label>
+
+                <input class="form-control" />
+
+            </div>
+
+            @* IsPublished *@
+
+        </div>
+
+        <div class="col-12 text-end">
+
+            <div class="form-check">
+
+                <label class="form-check-label">
+
+                    <InputCheckbox class="form-check-input" @bind-Value="Post.IsPublished" />
+
+                    Publish?
+
+                </label>
+
+            </div>
+
+            <button class="btn btn-primary">Save</button>
+
+        </div>
+
+    </EditForm>
+
+    @* TODO:
+            - slug
+            - updated
+            - created
+            - IsDeleted
+    *@
+
+}
+
+
+
+@code {
+    #region parameters
+
+    [Parameter, EditorRequired]
+    public BlogPostDTO? Post { get; set; }
+
+    [Parameter, EditorRequired]
+    public EventCallback<BlogPostDTO> OnSubmit { get; set; }
+
+    #endregion
+
+
+    #region state
+
+    private IEnumerable<CategoryDTO> categories = [];
+
+    private string? imageError;
+
+    #endregion
+
+
+    #region methods
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            categories = await CategoryService.GetCategoriesAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            throw;
+        }
+    }
+
+    private async Task OnFileChange(InputFileChangeEventArgs changeEvent)
+    {
+        if (changeEvent.File is null)
+        {
+            Post!.ImageURL = ImageHelper.DefaultBlogImage;
+        }
+        else if (changeEvent.File.Size > ImageHelper.MaxFileSize)
+        {
+            imageError = "Images must be less than 5 MB";
+        }
+        else
+        {
+            try
+            {
+                Post!.ImageURL = await ImageHelper.GetDataUrl(changeEvent.File);
+
+                imageError = null;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                imageError = "Could not read the selected file. Please select a different image";
+            }
+        }
+    }
+
+    private async Task HandleSubmit()
+    {
+        try
+        {
+            await OnSubmit.InvokeAsync(Post);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            throw;
+        }
+    }
+
+    #endregion
+}

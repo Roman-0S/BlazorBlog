@@ -1,0 +1,48 @@
+﻿@page "/author/posts/create"
+
+@rendermode InteractiveServer
+
+@attribute [Authorize(Roles = "Author")]
+
+
+
+<div class="container">
+
+    <h3>New Blog Post</h3>
+
+    <div class="card-body">
+
+        <BlogPostForm Post="new BlogPostDTO()" OnSubmit="HandleSubmit" />
+
+    </div>
+
+</div>
+
+
+
+@code {
+
+    #region parameters
+
+
+
+    #endregion
+
+
+    #region state
+
+
+
+    #endregion
+
+    
+    #region methods
+
+    private async Task HandleSubmit(BlogPostDTO post)
+    {
+        Console.WriteLine("Submitted!");
+    }
+
+    #endregion
+
+}

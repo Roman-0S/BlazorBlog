@@ -1,4 +1,8 @@
-﻿<header class="navbar navbar-expand-lg fixed-top bg-light">
+﻿@implements IDisposable
+
+@inject NavigationManager NavigationManager
+
+<header class="navbar navbar-expand-lg fixed-top bg-light">
     <div class="container">
 
         <!-- Navbar brand (Logo) -->
@@ -44,49 +48,103 @@
 
                 </li>
 
-                <li class="nav-item dropdown">
+                <AuthorizeView Roles="Author">
 
-                    <NavLink class="nav-link dropdown-toggle" href="author" Match="NavLinkMatch.Prefix" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
-                        Author Menu
-                    </NavLink>
+                    <li class="nav-item dropdown">
 
-                    <ul class="dropdown-menu">
+                        <NavLink class="nav-link dropdown-toggle" href="author" Match="NavLinkMatch.Prefix" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
+                            Author Menu
+                        </NavLink>
 
-                        <li><a class="dropdown-item" href="#">New Post</a></li>
+                        <ul class="dropdown-menu">
 
-                        <li><a class="dropdown-item" href="#">Manage Posts</a></li>
+                            <li><a class="dropdown-item" href="/author/posts/create">New Post</a></li>
 
-                        <li><a class="dropdown-item" href="#">Manage Categories</a></li>
+                            <li><a class="dropdown-item" href="#">Manage Posts</a></li>
 
-                    </ul>
+                            <li><a class="dropdown-item" href="/author/categories">Manage Categories</a></li>
 
-                </li>
+                        </ul>
 
-                <li class="nav-item dropdown">
+                    </li>
 
-                    <NavLink class="nav-link dropdown-toggle" href="account" Match="NavLinkMatch.Prefix" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
-                        Account
-                    </NavLink>
+                </AuthorizeView>
 
-                    <ul class="dropdown-menu">
+                <AuthorizeView>
 
-                        <li><a class="dropdown-item" href="Account/Login">Log In</a></li>
+                    <Authorized>
 
-                        <li><a class="dropdown-item" href="Account/Register">Register</a></li>
+                        <li class="nav-item dropdown">
 
-                        <li><a class="dropdown-item" href="#">Log Out</a></li>
+                            <NavLink class="nav-link dropdown-toggle" href="account" Match="NavLinkMatch.Prefix" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
+                                @(context.User?.Identity?.Name ?? "Account")
+                            </NavLink>
 
-                        <li><a class="dropdown-item" href="Account/Manage">Profile</a></li>
+                            <ul class="dropdown-menu">
 
-                    </ul>
-                </li>
+                                <li><a class="dropdown-item" href="Account/Manage">Profile</a></li>
 
+                                <li>
+
+                                    <form class="dropdown-item" action="Account/Logout" method="post">
+
+                                        <AntiforgeryToken />
+
+                                        <input type="hidden" name="ReturnUrl" value="@currentUrl" />
+
+                                        <button type="submit" class="nav-link ps-0">
+
+                                            Logout
+
+                                            <span class="ai ai-user-minus ms-1" aria-hidden="true"></span> 
+
+                                        </button>
+
+                                    </form>
+
+                                </li>
+
+                            </ul>
+
+                        </li>
+
+                    </Authorized>
+
+                    <NotAuthorized>
+
+                        <li class="nav-item">
+                            <NavLink class="nav-link" href="Account/Login" Match="NavLinkMatch.All">Login / Register</NavLink>
+                        </li>
+
+                    </NotAuthorized>
+
+                </AuthorizeView>
 
             </ul>
+
         </nav>
+
     </div>
+
 </header>
 
 @code {
+    private string? currentUrl;
 
+    protected override void OnInitialized()
+    {
+        currentUrl = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
+        NavigationManager.LocationChanged += OnLocationChanged;
+    }
+
+    private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
+    {
+        currentUrl = NavigationManager.ToBaseRelativePath(e.Location);
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        NavigationManager.LocationChanged -= OnLocationChanged;
+    }
 }

@@ -163,6 +163,8 @@
             try
             {
                 Category!.ImageURL = await ImageHelper.GetDataUrl(changeEvent.File);
+
+                imageError = null;
             }
             catch (Exception ex)
             {
