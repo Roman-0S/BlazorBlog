@@ -4,6 +4,7 @@
 
 @attribute [Authorize(Roles = "Author")]
 
+@inject IBlogPostDTOService BlogService
 
 
 <div class="container">
@@ -35,12 +36,20 @@
 
     #endregion
 
-    
+
     #region methods
 
     private async Task HandleSubmit(BlogPostDTO post)
     {
-        Console.WriteLine("Submitted!");
+        try
+        {
+            await BlogService.CreateBlogPostAsync(post);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            throw;
+        }
     }
 
     #endregion

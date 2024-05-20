@@ -15,7 +15,6 @@ namespace BlazorBlog.Client.Models
         [Length(2, 200, ErrorMessage = "The {0} should be between {2} and {1} characters long.")]
         public string? Title { get; set; }
 
-        [Required]
         public string? Slug { get; set; }
 
         [Required]
@@ -25,7 +24,6 @@ namespace BlazorBlog.Client.Models
         [Required]
         public string? Content { get; set; }
 
-        [Required]
         public DateTimeOffset Created
         {
             get => _created;
@@ -33,7 +31,6 @@ namespace BlazorBlog.Client.Models
             set => _created = value.ToUniversalTime();
         }
 
-        [Required]
         public DateTimeOffset? Updated
         {
             get => _updated;

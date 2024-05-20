@@ -23,6 +23,16 @@ h1:focus {
     outline: none;
 }
 
+
+.rich-text-editor {
+    flex-grow: 1;
+    min-height: 400px;
+}
+
+
+
+
+
 .valid.modified:not([type=checkbox]) {
     outline: 1px solid #26b050;
 }

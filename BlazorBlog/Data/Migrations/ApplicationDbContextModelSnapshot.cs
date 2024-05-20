@@ -141,7 +141,6 @@ namespace BlazorBlog.Data.Migrations
                         .HasColumnType("text");
 
                     b.Property<DateTimeOffset?>("Updated")
-                        .IsRequired()
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");

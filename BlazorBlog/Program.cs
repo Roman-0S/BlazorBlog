@@ -46,8 +46,10 @@ builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.Requ
 builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
 
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<IBlogPostRepository, BlogPostRepository>();
 
 builder.Services.AddScoped<ICategoryDTOService, CategoryDTOService>();
+builder.Services.AddScoped<IBlogPostDTOService, BlogPostDTOService>();
 
 
 

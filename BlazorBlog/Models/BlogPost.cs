@@ -34,7 +34,6 @@ namespace BlazorBlog.Models
             set => _created = value.ToUniversalTime();
         }
 
-        [Required]
         public DateTimeOffset? Updated
         {
             get => _updated;
