@@ -98,5 +98,46 @@ namespace BlazorBlog.Services
 
             return blogPosts;
         }
+
+        public async Task UpdateBlogPostAsync(BlogPost blogPost)
+        {
+            using ApplicationDbContext context = contextFactory.CreateDbContext();
+
+            bool shouldEdit = await context.BlogPosts.AnyAsync(c => c.Id == blogPost.Id);
+
+            if (shouldEdit)
+            {
+                ImageUpload? oldImage = null;
+
+                if (blogPost.Image is not null)
+                {
+                    context.Images.Add(blogPost.Image);
+
+                    oldImage = await context.Images.FirstOrDefaultAsync(i => i.Id == blogPost.ImageId);
+
+                    blogPost.ImageId = blogPost.ImageId;
+                }
+
+                blogPost.Slug = await GenerateSlugAsync(blogPost.Title!, blogPost!.Id);
+
+                context.BlogPosts.Update(blogPost);
+                await context.SaveChangesAsync();
+
+                if (oldImage is not null)
+                {
+                    context.Images.Remove(oldImage);
+                    await context.SaveChangesAsync();
+                }
+            }
+        }
+
+        public async Task<BlogPost?> GetBlogPostByIdAsync(int blogPostId)
+        {
+            using ApplicationDbContext context = contextFactory.CreateDbContext();
+
+            BlogPost? blogPost = await context.BlogPosts.Include(bp => bp.Category).FirstOrDefaultAsync(bp => bp.Id == blogPostId);
+
+            return blogPost;
+        }
     }
 }

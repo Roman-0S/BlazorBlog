@@ -1,0 +1,87 @@
+﻿@page "/author/posts/edit/{id:int}"
+
+@rendermode InteractiveServer
+
+@attribute [Authorize(Roles = "Author")]
+
+@inject IBlogPostDTOService BlogService
+@inject NavigationManager Nav
+
+
+@if (blogPost is not null)
+{
+
+    <PageTitle>BlazorBlog | Edit Post</PageTitle>
+
+    <div class="container">
+
+        <h3>Edit Blog Post</h3>
+
+        <div class="card-body">
+
+            <BlogPostForm Post="blogPost" OnSubmit="HandleSubmit" />
+
+        </div>
+
+    </div>
+
+}
+
+
+
+
+@code {
+
+    #region parameters
+
+    [Parameter]
+    public int Id { get; set; }
+
+    #endregion
+
+
+    #region state
+
+    private BlogPostDTO? blogPost;
+
+    #endregion
+
+
+    #region methods
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            blogPost = await BlogService.GetBlogPostByIdAsync(Id);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            throw;
+        }
+
+        if (blogPost is null)
+        {
+            Nav.NavigateTo("/author/posts/manage");
+        }
+    }
+
+    private async Task HandleSubmit()
+    {
+        try
+        {
+            await BlogService.UpdateBlogPostAsync(blogPost!);
+
+            Nav.NavigateTo("/author/posts/manage");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            throw;
+        }
+    }
+
+    #endregion
+
+}

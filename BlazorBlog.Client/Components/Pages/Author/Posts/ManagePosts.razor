@@ -1,0 +1,93 @@
+﻿@page "/author/posts/manage"
+
+@inject IBlogPostDTOService BlogService
+
+
+<div>
+
+    <div class="row align-items-center gy-2 mb-4 pb-1 pb-sm-2 pb-lg-3">
+
+        <div class="col-xl-6 col-lg-7  mb-4 mb-lg-0 hstack justify-content-between">
+
+            <h1 class="mb-0 me-4">Blog list</h1>
+
+            <div class="text-end">
+
+                <button class="btn btn-sm btn-primary me-2">Published</button>
+
+                <button class="btn btn-sm btn-info me-2">Draft</button>
+
+                <button class="btn btn-sm btn-danger me-2">Deleted</button>
+
+            </div>
+
+        </div>
+
+        <div class="col-xl-2 col-lg-2 col-sm-5">
+
+            <select class="form-select">
+
+                <option>All categories</option>
+                <option>Inspiration</option>
+                <option>Brand strategy</option>
+                <option>Advertisement</option>
+                <option>Ecommerce</option>
+                <option>Travel &amp; Vacation</option>
+
+            </select>
+
+        </div>
+
+        <div class="col-xl-4 col-lg-3 col-sm-7">
+
+            <div class="position-relative">
+
+                <i class="ai-search position-absolute top-50 start-0 translate-middle-y ms-3"></i>
+
+                <input class="form-control ps-5" type="search" placeholder="Enter keyword">
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="mt-5">
+
+        @foreach (BlogPostDTO blogPost in blogPosts)
+        {
+            <BlogPostCard BlogPost="blogPost" />
+        }
+
+    </div>
+
+</div>
+
+
+
+@code {
+
+    #region parameters
+
+
+
+    #endregion
+
+
+    #region state
+
+    private IEnumerable<BlogPostDTO> blogPosts = [];
+
+    #endregion
+
+
+    #region methods
+
+    protected override async Task OnInitializedAsync()
+    {
+        blogPosts = await BlogService.GetBlogPostsAsync();
+    }
+
+    #endregion
+
+}

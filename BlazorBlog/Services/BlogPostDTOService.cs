@@ -40,11 +40,52 @@ namespace BlazorBlog.Services
             return blogPost.ToDTO();
         }
 
+        public async Task<BlogPostDTO?> GetBlogPostByIdAsync(int blogPostId)
+        {
+            BlogPost? blogPost = await repository.GetBlogPostByIdAsync(blogPostId);
+
+            return blogPost?.ToDTO();
+        }
+
         public async Task<IEnumerable<BlogPostDTO>> GetBlogPostsAsync()
         {
             IEnumerable<BlogPost> blogPosts = await repository.GetBlogPostsAsync();
 
             return blogPosts.Select(bp => bp.ToDTO());
+        }
+
+        public async Task UpdateBlogPostAsync(BlogPostDTO blogPostDTO)
+        {
+            BlogPost? blogPostToUpdate = await repository.GetBlogPostByIdAsync(blogPostDTO.Id);
+
+            if (blogPostToUpdate is not null)
+            {
+                blogPostToUpdate.Title = blogPostDTO.Title;
+
+                blogPostToUpdate.Abstract = blogPostDTO.Abstract;
+
+                blogPostToUpdate.Content = blogPostDTO.Content;
+
+                blogPostToUpdate.IsPublished = blogPostDTO.IsPublished;
+
+                blogPostToUpdate.IsDeleted = blogPostDTO.IsDeleted;
+
+                blogPostToUpdate.CategoryId = blogPostDTO.CategoryId;
+
+                blogPostToUpdate.Updated = DateTimeOffset.Now;
+
+
+                if (blogPostDTO.ImageURL.StartsWith("data:"))
+                {
+                    blogPostToUpdate.Image = UploadHelper.GetImageUpload(blogPostDTO.ImageURL);
+                }
+
+                // TODO: Tags
+
+
+                await repository.UpdateBlogPostAsync(blogPostToUpdate);
+            }
+
         }
     }
 }
