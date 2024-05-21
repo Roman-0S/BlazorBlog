@@ -25,7 +25,7 @@
 
                 @foreach (BlogPostDTO blogPost in blogPosts)
                 {
-                    <BlogPostCard BlogPost="blogPost" />
+                    <BlogPostCard BlogPost="blogPost" OnDelete="HandleDelete" />
                 }
 
             </div>
@@ -206,6 +206,25 @@
     protected override async Task OnInitializedAsync()
     {
         blogPosts = await BlogService.GetBlogPostsAsync();
+
+        blogPosts = blogPosts.Where(bp => bp.IsPublished == true);
+    }
+
+    private async Task HandleDelete(BlogPostDTO blogPost)
+    {
+        try
+        {
+            await BlogService.UpdateBlogPostAsync(blogPost);
+
+            blogPosts = await BlogService.GetBlogPostsAsync();
+
+            blogPosts = blogPosts.Where(bp => bp.IsPublished == true);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            throw;
+        }
     }
 
     #endregion

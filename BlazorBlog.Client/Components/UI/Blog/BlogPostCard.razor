@@ -4,61 +4,130 @@
 @if (BlogPost is not null)
 {
 
-    <article class="row g-0 border-0 mb-4">
+    @if (!Delete)
+    {
 
-        <a class="col-sm-5 bg-repeat-0 bg-size-cover bg-position-center rounded-5" href="#" style="background-image: url(@(string.IsNullOrEmpty(BlogPost.ImageURL) ? ImageHelper.DefaultBlogImage : BlogPost.ImageURL)); min-height: 14rem" aria-label="Post image"></a>
+        <article class="row g-0 border-0 mb-4">
 
-        @* Attribution *@
+            <a class="col-sm-5 bg-repeat-0 bg-size-cover bg-position-center rounded-5" href="#" style="background-image: url(@(string.IsNullOrEmpty(BlogPost.ImageURL) ? ImageHelper.DefaultBlogImage : BlogPost.ImageURL)); min-height: 14rem" aria-label="Post image"></a>
 
-        @* Photo by <a href="https://unsplash.com/andrewtneel?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">Andrew Neel</a> on <a href="https://unsplash.com/photos/macbook-pro-white-ceramic-mugand-black-smartphone-on-table-cckf4TsHAuw?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">Unsplash</a> *@
+            @* Attribution *@
 
-        <div class="col-sm-7">
+            @* Photo by <a href="https://unsplash.com/andrewtneel?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">Andrew Neel</a> on <a href="https://unsplash.com/photos/macbook-pro-white-ceramic-mugand-black-smartphone-on-table-cckf4TsHAuw?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">Unsplash</a> *@
 
-            <div class="pt-4 pb-sm-4 ps-sm-4 pe-lg-4">
+            <div class="col-sm-7">
 
-                <h3>
-                    <a href="#">@BlogPost.Title</a>
-                </h3>
+                <div class="pt-4 pb-sm-4 ps-sm-4 pe-lg-4">
 
-                <p class="d-sm-none d-md-block">@BlogPost.Abstract</p>
+                    <h3>
+                        <a href="#">@BlogPost.Title</a>
+                    </h3>
 
-                <div class="d-flex flex-wrap align-items-center mt-n2">
+                    <p class="d-sm-none d-md-block">@BlogPost.Abstract</p>
 
-                    <a class="nav-link text-body-secondary fs-sm fw-normal d-flex align-items-end p-0 mt-2" href="#">
+                    <div class="d-flex flex-wrap align-items-center mt-n2">
 
-                        12
+                        <a class="nav-link text-body-secondary fs-sm fw-normal d-flex align-items-end p-0 mt-2" href="#">
 
-                        <i class="ai-message fs-lg ms-1"></i>
+                            12
 
-                    </a>
+                            <i class="ai-message fs-lg ms-1"></i>
 
-                    <span class="fs-xs opacity-20 mt-2 mx-3">|</span>
+                        </a>
 
-                    <span class="fs-sm text-body-secondary mt-2">@BlogPost.Created</span>
+                        <span class="fs-xs opacity-20 mt-2 mx-3">|</span>
 
-                    <span class="fs-xs opacity-20 mt-2 mx-3">|</span>
+                        <span class="fs-sm text-body-secondary mt-2">@BlogPost.Created</span>
 
-                    <a class="badge text-nav fs-xs border mt-2" href="#">@BlogPost.Category?.Name</a>
+                        <span class="fs-xs opacity-20 mt-2 mx-3">|</span>
 
-                </div>
-
-                <AuthorizeView Roles="Author">
-
-                    <div class="mt-2">
-
-                        <a class="btn btn-sm btn-primary me-2" href="/author/posts/edit/@BlogPost.Id">Edit</a>
-
-                        
+                        <a class="badge text-nav fs-xs border mt-2" href="#">@BlogPost.Category?.Name</a>
 
                     </div>
 
-                </AuthorizeView>
+                    <AuthorizeView Roles="Author">
+
+                        <div class="mt-2">
+
+                            <a class="btn btn-sm btn-primary me-2" href="/author/posts/edit/@BlogPost.Id">Edit</a>
+
+                            <button class="btn btn-sm btn-danger" @onclick="() => Delete = !Delete">Delete</button>
+
+                        </div>
+
+                    </AuthorizeView>
+
+                </div>
 
             </div>
 
-        </div>
+        </article>
 
-    </article>
+    }
+    else if (Delete)
+    {
+
+        <article class="row g-0 border-0 mb-4">
+
+            <a class="col-sm-5 bg-repeat-0 bg-size-cover bg-position-center rounded-5" href="#" style="background-image: url(@(string.IsNullOrEmpty(BlogPost.ImageURL) ? ImageHelper.DefaultBlogImage : BlogPost.ImageURL)); min-height: 14rem" aria-label="Post image"></a>
+
+            @* Attribution *@
+
+            @* Photo by <a href="https://unsplash.com/andrewtneel?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">Andrew Neel</a> on <a href="https://unsplash.com/photos/macbook-pro-white-ceramic-mugand-black-smartphone-on-table-cckf4TsHAuw?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">Unsplash</a> *@
+
+            <div class="col-sm-7">
+
+                <div class="pt-4 pb-sm-4 ps-sm-4 pe-lg-4">
+
+                    <h3>
+                        <a href="#">@BlogPost.Title</a>
+                    </h3>
+
+                    <p class="d-sm-none d-md-block">@BlogPost.Abstract</p>
+
+                    <div class="d-flex flex-wrap align-items-center mt-n2">
+
+                        <a class="nav-link text-body-secondary fs-sm fw-normal d-flex align-items-end p-0 mt-2" href="#">
+
+                            12
+
+                            <i class="ai-message fs-lg ms-1"></i>
+
+                        </a>
+
+                        <span class="fs-xs opacity-20 mt-2 mx-3">|</span>
+
+                        <span class="fs-sm text-body-secondary mt-2">@BlogPost.Created</span>
+
+                        <span class="fs-xs opacity-20 mt-2 mx-3">|</span>
+
+                        <a class="badge text-nav fs-xs border mt-2" href="#">@BlogPost.Category?.Name</a>
+
+                    </div>
+
+                    <AuthorizeView Roles="Author">
+
+                        <div class="mt-2">
+
+                            <div class="text-danger mb-2">
+                                Are you sure you want to delete this post?
+                            </div>
+
+                            <button class="btn btn-sm btn-danger me-2" @onclick="DeletePost">Delete</button>
+
+                            <button class="btn btn-sm btn-outline-secondary" @onclick="() => Delete = !Delete">Cancel</button>
+
+                        </div>
+
+                    </AuthorizeView>
+
+                </div>
+
+            </div>
+
+        </article>
+
+    }
 
 }
 
@@ -71,19 +140,29 @@
     [Parameter, EditorRequired]
     public BlogPostDTO? BlogPost { get; set; }
 
+    [Parameter, EditorRequired]
+    public EventCallback<BlogPostDTO> OnDelete { get; set; }
+
     #endregion
 
 
     #region state
 
-
+    private bool Delete;
 
     #endregion
 
 
     #region methods
 
+    private async void DeletePost()
+    {
+        BlogPost!.IsDeleted = true;
 
+        BlogPost!.IsPublished = false;
+
+        await OnDelete.InvokeAsync(BlogPost);
+    }
 
     #endregion
 
