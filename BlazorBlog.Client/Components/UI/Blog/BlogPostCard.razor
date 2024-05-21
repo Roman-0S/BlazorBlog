@@ -1,0 +1,78 @@
+﻿@using BlazorBlog.Client.Helpers
+
+
+@if (BlogPost is not null)
+{
+
+    <article class="row g-0 border-0 mb-4">
+
+        <a class="col-sm-5 bg-repeat-0 bg-size-cover bg-position-center rounded-5" href="#" style="background-image: url(@(string.IsNullOrEmpty(BlogPost.ImageURL) ? ImageHelper.DefaultBlogImage : BlogPost.ImageURL)); min-height: 14rem" aria-label="Post image"></a>
+
+        @* Attribution *@
+
+        @* Photo by <a href="https://unsplash.com/andrewtneel?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">Andrew Neel</a> on <a href="https://unsplash.com/photos/macbook-pro-white-ceramic-mugand-black-smartphone-on-table-cckf4TsHAuw?utm_content=creditCopyText&utm_medium=referral&utm_source=unsplash">Unsplash</a> *@
+
+        <div class="col-sm-7">
+
+            <div class="pt-4 pb-sm-4 ps-sm-4 pe-lg-4">
+
+                <h3>
+                    <a href="#">@BlogPost.Title</a>
+                </h3>
+
+                <p class="d-sm-none d-md-block">@BlogPost.Abstract</p>
+
+                <div class="d-flex flex-wrap align-items-center mt-n2">
+
+                    <a class="nav-link text-body-secondary fs-sm fw-normal d-flex align-items-end p-0 mt-2" href="#">
+
+                        12
+
+                        <i class="ai-message fs-lg ms-1"></i>
+
+                    </a>
+
+                    <span class="fs-xs opacity-20 mt-2 mx-3">|</span>
+
+                    <span class="fs-sm text-body-secondary mt-2">@BlogPost.Created</span>
+
+                    <span class="fs-xs opacity-20 mt-2 mx-3">|</span>
+
+                    <a class="badge text-nav fs-xs border mt-2" href="#">@BlogPost.Category?.Name</a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </article>
+
+}
+
+
+
+@code {
+
+    #region parameters
+
+    [Parameter, EditorRequired]
+    public BlogPostDTO? BlogPost { get; set; }
+
+    #endregion
+
+
+    #region state
+
+
+
+    #endregion
+
+
+    #region methods
+
+
+
+    #endregion
+
+}

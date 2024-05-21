@@ -74,9 +74,15 @@ namespace BlazorBlog.Models
                 IsPublished = post.IsPublished,
                 IsDeleted = post.IsDeleted,
                 CategoryId = post.CategoryId,
-                Category = post.Category?.ToDTO(),
                 ImageURL = post.ImageId.HasValue ? $"api/uploads/{post.ImageId}" : UploadHelper.DefaultBlogImage
             };
+
+            if (post.Category is not null)
+            {
+                post.Category.Posts.Clear();
+
+                dto.Category = post.Category.ToDTO();
+            }
 
             foreach (Comment comment in post.Comments)
             {

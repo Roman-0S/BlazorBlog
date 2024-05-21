@@ -90,5 +90,13 @@ namespace BlazorBlog.Services
             return slug;
         }
 
+        public async Task<IEnumerable<BlogPost>> GetBlogPostsAsync()
+        {
+            using ApplicationDbContext context = contextFactory.CreateDbContext();
+
+            IEnumerable<BlogPost> blogPosts = await context.BlogPosts.Include(bp => bp.Category).ToListAsync();
+
+            return blogPosts;
+        }
     }
 }
