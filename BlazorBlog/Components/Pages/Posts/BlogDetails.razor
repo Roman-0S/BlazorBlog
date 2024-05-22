@@ -1,7 +1,11 @@
 ﻿@page "/posts/{slug}"
+@layout SidebarLayout
+
+@using BlazorBlog.Components.Layout
+@using BlazorBlog.Client.Components.UI.Tags
+@using BlazorBlog.Client.Helpers
 @using BlazorBlog.Client.Models
 @using BlazorBlog.Client.Services.Interfaces
-
 
 @inject IBlogPostDTOService BlogService
 
@@ -9,7 +13,7 @@
 {
     <PageTitle>Blazor Blog | Not Found</PageTitle>
 
-    <div class="d-flex h-100 flex-column">
+    <div class="d-flex h-100 flex-column align-items-center justify-content-center gap-2">
 
         <h1>Uh oh!</h1>
 
@@ -21,8 +25,86 @@
 }
 else
 {
+    <PageTitle>Blazor Blog | @blogPost.Title</PageTitle>
 
-    <PageTitle>Blazor Blog | </PageTitle>
+    <!-- Post title + post meta -->
+    <h1 class="pb-2 pb-lg-3">@blogPost.Title</h1>
+    <div class="d-flex flex-wrap align-items-center justify-content-between border-bottom mb-4">
+
+        <div class="d-flex align-items-center mb-4 me-4">
+
+            <span class="fs-sm me-2">By:</span>
+
+            <a class="nav-link position-relative fw-semibold p-0" href="/posts/@Slug/#authorWidget" data-scroll data-scroll-offset="80">
+
+                Roman Steele
+
+                <span class="d-block position-absolute start-0 bottom-0 w-100" style="background-color: currentColor; height: 1px;"></span>
+
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- Post content -->
+    <div class="post-content">
+
+        <p class="fs-lg pt-2 pt-sm-3">@blogPost.Abstract</p>
+
+        <figure class="figure">
+
+            <img class="figure-img rounded-5 my-3" src="@(string.IsNullOrEmpty(blogPost.ImageURL) ? ImageHelper.DefaultBlogImage : blogPost.ImageURL)" alt="Image">
+
+        </figure>
+
+        <p class="fs-lg pb-2 pb-lg-0 mb-4 mb-lg-5">@((MarkupString)blogPost.Content!)</p>
+
+    </div>
+
+    <!-- Tags -->
+    <div class="d-flex flex-wrap pb-5 pt-3 pt-md-4 pt-xl-5 mt-xl-n2">
+
+        <h3 class="h6 py-1 mb-0 me-4">Relevant tags:</h3>
+
+        @foreach (TagDTO tag in blogPost.Tags)
+        {
+            <TagPill Tag="tag" />
+        }
+
+
+    </div>
+
+    <!-- Author widget -->
+    <div class="border-top border-bottom py-4" id="authorWidget">
+        <div class="d-flex align-items-start py-2">
+            <img class="d-block rounded-circle mb-3" src="api/uploads/author" width="56" alt="Author image">
+            <div class="d-md-flex w-100 ps-4">
+                <div style="max-width: 26rem;">
+                    <h3 class="h5 mb-2">Roman Steele</h3>
+                    <p class="fs-sm mb-0">Porta nisl a ultrices ut libero id. Gravida mi neque, tristique justo, et pharetra laoreet nulla est nulla cras ac arcu sed mattis tristique convallis suspen enim blandit massa cursus augue dui mattis morbi velit semper nunc at etiam lacinia.</p>
+                </div>
+                <div class="pt-4 pt-md-0 ps-md-4 ms-md-auto">
+                    <h3 class="h5">Share post:</h3>
+                    <div class="d-flex">
+                        <a class="nav-link p-2 me-2" href="#" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Instagram" aria-label="Instagram">
+                            <i class="ai-instagram"></i>
+                        </a>
+                        <a class="nav-link p-2 me-2" href="#" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Facebook" aria-label="Facebook">
+                            <i class="ai-facebook"></i>
+                        </a>
+                        <a class="nav-link p-2 me-2" href="#" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Telegram" aria-label="Telegram">
+                            <i class="ai-telegram fs-sm"></i>
+                        </a>
+                        <a class="nav-link p-2" href="#" data-bs-toggle="tooltip" data-bs-placement="bottom" title="X" aria-label="X">
+                            <i class="ai-x"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
 }
 
@@ -47,7 +129,10 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        blogPost = await BlogService.GetBlogPostBySlugAsync(Slug!);
+        if (!string.IsNullOrEmpty(Slug))
+        {
+            blogPost = await BlogService.GetBlogPostBySlugAsync(Slug);
+        }
     }
 
     #endregion

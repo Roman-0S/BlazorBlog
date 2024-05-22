@@ -1,0 +1,37 @@
+﻿
+
+@if (Tag is not null)
+{
+
+    <a class="nav-link fs-sm py-1 px-0 me-3" href="#">
+        <span class="text-primary">#</span>@Tag.Name
+    </a>
+
+}
+
+
+
+@code {
+
+    #region parameters
+
+    [Parameter, EditorRequired]
+    public TagDTO? Tag { get; set; }
+
+    #endregion
+
+
+    #region state
+
+
+
+    #endregion
+
+
+    #region methods
+
+
+
+    #endregion
+
+}

@@ -163,6 +163,7 @@ namespace BlazorBlog.Services
             return blogPosts;
         }
 
+
         public async Task AddTagsToBlogPostAsync(int blogPostId, IEnumerable<string> tagNames)
         {
             using ApplicationDbContext context = contextFactory.CreateDbContext();
@@ -213,7 +214,12 @@ namespace BlazorBlog.Services
         {
             using ApplicationDbContext context = contextFactory.CreateDbContext();
 
-            BlogPost? blogPost = await context.BlogPosts.Include(bp => bp.Category).FirstOrDefaultAsync(bp => bp.Slug == slug);
+            BlogPost? blogPost = await context.BlogPosts.Where(bp => bp.IsPublished == true && bp.IsDeleted == false)
+                                                        .Include(bp => bp.Category)
+                                                        .Include(bp => bp.Tags)
+                                                        .Include(bp => bp.Comments)
+                                                            .ThenInclude(c => c.AppUser)
+                                                        .FirstOrDefaultAsync(bp => bp.Slug == slug);
 
             return blogPost;
         }

@@ -69,7 +69,7 @@
 
             <article class="row g-0 border-0 mb-4">
 
-                <a class="col-sm-5 bg-repeat-0 bg-size-cover bg-position-center rounded-5" href="#" style="background-image: url(@(string.IsNullOrEmpty(BlogPost.ImageURL) ? ImageHelper.DefaultBlogImage : BlogPost.ImageURL)); min-height: 16rem" aria-label="Post image"></a>
+                <a class="col-sm-5 bg-repeat-0 bg-size-cover bg-position-center rounded-5" href="/posts/@BlogPost.Slug" style="background-image: url(@(string.IsNullOrEmpty(BlogPost.ImageURL) ? ImageHelper.DefaultBlogImage : BlogPost.ImageURL)); min-height: 16rem" aria-label="Post image"></a>
 
                 @* Attribution *@
 
@@ -80,7 +80,7 @@
                     <div class="pt-4 pb-sm-4 ps-sm-4 pe-lg-4">
 
                         <h3>
-                            <a href="#">@BlogPost.Title</a>
+                            <a href="/posts/@BlogPost.Slug">@BlogPost.Title</a>
                         </h3>
 
                         <p class="d-sm-none d-md-block">@BlogPost.Abstract</p>
