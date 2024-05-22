@@ -15,5 +15,9 @@ namespace BlazorBlog.Services.Interfaces
         Task<IEnumerable<BlogPost>> GetBlogPostsByCategoryIdAsync(int categoryId);
 
         Task<IEnumerable<BlogPost>> SearchBlogPostsAsync(string searchTerm);
+
+        Task AddTagsToBlogPostAsync(int blogPostId, IEnumerable<string> tagNames);
+
+        Task RemoveTagsFromBlogPostAsync(int blogPostId);
     }
 }

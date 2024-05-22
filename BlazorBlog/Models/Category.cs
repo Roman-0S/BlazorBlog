@@ -36,7 +36,6 @@ namespace BlazorBlog.Models
 
             foreach (BlogPost post in category.Posts)
             {
-                category.Posts.Clear();
                 dto.Posts.Add(post.ToDTO());
             }
 

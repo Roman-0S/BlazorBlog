@@ -1,6 +1,5 @@
 ﻿@page "/"
 
-@rendermode InteractiveServer
 
 @using BlazorBlog.Client.Components.UI.Blog
 @using BlazorBlog.Client.Models
@@ -115,18 +114,9 @@
                     <h4 class="pt-3 pt-lg-0 pb-1">Trending posts:</h4>
                     <div class="mb-lg-5 mb-4">
 
-                        @foreach (BlogPostDTO blogPost in blogPosts.OrderByDescending(bp => bp.Comments.Count()))
+                        @foreach (BlogPostDTO blogPost in blogPosts.OrderByDescending(bp => bp.Comments.Count()).Take(3))
                         {
-                            int i = 0;
-
-                            <SideBarBlogCard blogPost="blogPost" />
-
-                            if (i == 3)
-                            {
-                                break;
-                            }
-
-                            i++;
+                            <SideBarBlogCard blogPost="blogPost" />                           
                         }
 
                     </div>

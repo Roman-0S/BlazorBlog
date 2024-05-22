@@ -29,7 +29,7 @@
 
                 <label class="form-label" for="postAbstract">Abstract</label>
 
-                <InputTextArea class="form-control" @bind-Value="Post.Abstract" rows="3" id="postAbstract"/>
+                <InputTextArea class="form-control" @bind-Value="Post.Abstract" rows="3" id="postAbstract" />
 
                 <ValidationMessage For="() => Post.Abstract" />
 
@@ -41,7 +41,7 @@
 
                 <label class="form-label">Category</label>
 
-                <InputSelect class="form-select" @bind-Value="Post.CategoryId" >
+                <InputSelect class="form-select" @bind-Value="Post.CategoryId">
 
                     <option value="">Select a Category</option>
 
@@ -62,9 +62,14 @@
 
             <div class="mb-2">
 
-                <label class="form-label">Image</label>
+                <div class="vstack">
 
-                <img class="img-fluid" style="max-height: 350px" src="@(string.IsNullOrEmpty(Post.ImageURL) ? ImageHelper.DefaultBlogImage : Post.ImageURL)" />
+                    <label class="form-label">Image</label>
+
+                    <img class="img-fluid" style="max-height: 350px" src="@(string.IsNullOrEmpty(Post.ImageURL) ? ImageHelper.DefaultBlogImage : Post.ImageURL)" />
+
+                </div>
+
 
                 <InputFile OnChange="OnFileChange" class="form-control mt-3" accept=".png, .jpg, .jpeg, .svg" />
 
@@ -82,7 +87,7 @@
 
                 <label class="form-label">Content</label>
 
-                <TinyMCE.Blazor.Editor ScriptSrc="/tinymce/tinymce.min.js" @bind-Value="Post.Content" Field="() => Post.Content" ClassName="rich-text-editor" Conf="editorConfig"  />
+                <TinyMCE.Blazor.Editor ScriptSrc="/tinymce/tinymce.min.js" @bind-Value="Post.Content" Field="() => Post.Content" ClassName="rich-text-editor" Conf="editorConfig" />
 
                 <ValidationMessage For="() => Post.Content" />
 
@@ -94,7 +99,7 @@
 
                 <label class="form-label">Tags</label>
 
-                <input class="form-control" />
+                <InputText @bind-Value="tagNames" class="form-control" />
 
             </div>
 
@@ -124,13 +129,6 @@
 
     </EditForm>
 
-    @* TODO:
-            - slug
-            - updated
-            - created
-            - IsDeleted
-    *@
-
 }
 
 
@@ -153,6 +151,8 @@
 
     private string? imageError;
 
+    private string tagNames = string.Empty;
+
     // tinyMCE config
     private static readonly Dictionary<string, object> editorConfig = new()
     {
@@ -168,7 +168,7 @@
                 new { text = "C#", value = "csharp" },
                 new { text = "Razor", value = "razor" },
                 new { text = "JSON", value = "json" },
-            }
+    }
         },
         { "codesample_global_prismjs", true },
         { "promotion", false },
@@ -223,6 +223,10 @@
     {
         try
         {
+            IEnumerable<string> listOfNames = tagNames.Split(",", StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+
+            Post!.Tags = [.. listOfNames.Select(name => new TagDTO() { Name = name })];
+
             await OnSubmit.InvokeAsync(Post);
         }
         catch (Exception ex)

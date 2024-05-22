@@ -33,9 +33,10 @@ namespace BlazorBlog.Services
                 }
             }
 
-            // TODO: tags
-
             blogPost = await repository.CreateBlogPostAsync(blogPost);
+
+            IEnumerable<string> tagNames = blogPostDTO.Tags.Select(t => t.Name!);
+            await repository.AddTagsToBlogPostAsync(blogPost.Id, tagNames);
 
             return blogPost.ToDTO();
         }
@@ -94,7 +95,9 @@ namespace BlazorBlog.Services
                     blogPostToUpdate.Image = UploadHelper.GetImageUpload(blogPostDTO.ImageURL);
                 }
 
-                // TODO: Tags
+                IEnumerable<string> tagNames = blogPostDTO.Tags.Select(t => t.Name!);
+
+
 
 
                 await repository.UpdateBlogPostAsync(blogPostToUpdate);

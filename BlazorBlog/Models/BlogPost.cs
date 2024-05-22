@@ -79,7 +79,7 @@ namespace BlazorBlog.Models
 
             if (post.Category is not null)
             {
-                post.Category.Posts.Clear();
+                post.Category.Posts = [];
 
                 dto.Category = post.Category.ToDTO();
             }
