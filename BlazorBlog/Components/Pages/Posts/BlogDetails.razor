@@ -1,0 +1,55 @@
+﻿@page "/posts/{slug}"
+@using BlazorBlog.Client.Models
+@using BlazorBlog.Client.Services.Interfaces
+
+
+@inject IBlogPostDTOService BlogService
+
+@if (blogPost is null)
+{
+    <PageTitle>Blazor Blog | Not Found</PageTitle>
+
+    <div class="d-flex h-100 flex-column">
+
+        <h1>Uh oh!</h1>
+
+        <p class="lead">This post could not be found.</p>
+
+        <a href="/" class="btn btn-primary">Go Back Home</a>
+
+    </div>
+}
+else
+{
+
+    <PageTitle>Blazor Blog | </PageTitle>
+
+}
+
+@code {
+
+    #region parameters
+
+    [Parameter]
+    public string? Slug { get; set; }
+
+    #endregion
+
+
+    #region state
+
+    private BlogPostDTO? blogPost;
+
+    #endregion
+
+
+    #region methods
+
+    protected override async Task OnInitializedAsync()
+    {
+        blogPost = await BlogService.GetBlogPostBySlugAsync(Slug!);
+    }
+
+    #endregion
+
+}

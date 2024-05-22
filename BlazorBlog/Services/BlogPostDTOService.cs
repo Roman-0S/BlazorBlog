@@ -48,6 +48,13 @@ namespace BlazorBlog.Services
             return blogPost?.ToDTO();
         }
 
+        public async Task<BlogPostDTO?> GetBlogPostBySlugAsync(string slug)
+        {
+            BlogPost? blogPost = await repository.GetBlogPostBySlugAsync(slug);
+
+            return blogPost?.ToDTO();
+        }
+
         public async Task<IEnumerable<BlogPostDTO>> GetBlogPostsAsync()
         {
             IEnumerable<BlogPost> blogPosts = await repository.GetBlogPostsAsync();

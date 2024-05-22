@@ -208,5 +208,14 @@ namespace BlazorBlog.Services
                 await context.SaveChangesAsync();
             }
         }
+
+        public async Task<BlogPost?> GetBlogPostBySlugAsync(string slug)
+        {
+            using ApplicationDbContext context = contextFactory.CreateDbContext();
+
+            BlogPost? blogPost = await context.BlogPosts.Include(bp => bp.Category).FirstOrDefaultAsync(bp => bp.Slug == slug);
+
+            return blogPost;
+        }
     }
 }
