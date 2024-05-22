@@ -10,6 +10,8 @@ namespace BlazorBlog.Client.Services.Interfaces
 
         Task<CategoryDTO?> GetCategoryByIdAsync(int categoryId);
 
+        Task<IEnumerable<CategoryDTO>> GetPopularCategoriesAsync(int count);
+
         Task UpdateCategoryAsync(CategoryDTO category);
 
         Task DeleteCategoryAsync(int categoryId);

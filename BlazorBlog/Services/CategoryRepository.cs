@@ -48,6 +48,18 @@ namespace BlazorBlog.Services
             return category;
         }
 
+        public async Task<IEnumerable<Category>> GetPopularCategoriesAsync(int amount)
+        {
+            using ApplicationDbContext context = contextFactory.CreateDbContext();
+
+            IEnumerable<Category> categories = await context.Categories.Include(c => c.Posts.Where(p => p.IsPublished && !p.IsDeleted))
+                                                                       .OrderByDescending(c => c.Posts.Where(p => p.IsPublished && !p.IsDeleted).Count())
+                                                                       .Take(amount)
+                                                                       .ToListAsync();
+
+            return categories;
+        }
+
         public async Task UpdateCategoryAsync(Category category)
         {
             using ApplicationDbContext context = contextFactory.CreateDbContext();
