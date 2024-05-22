@@ -139,5 +139,28 @@ namespace BlazorBlog.Services
 
             return blogPost;
         }
+
+        public async Task<IEnumerable<BlogPost>> GetBlogPostsByCategoryIdAsync(int categoryId)
+        {
+            using ApplicationDbContext context = contextFactory.CreateDbContext();
+
+            List<BlogPost> blogPosts = await context.BlogPosts.Include(bp => bp.Category).Where(bp => bp.Category!.Id == categoryId).ToListAsync();
+
+            return blogPosts;
+        }
+
+        public async Task<IEnumerable<BlogPost>> SearchBlogPostsAsync(string searchTerm)
+        {
+            using ApplicationDbContext context = contextFactory.CreateDbContext();
+
+            string normalizedSearch = searchTerm.Trim().ToLower();
+
+            IEnumerable<BlogPost> blogPosts = await context.BlogPosts.Include(bp => bp.Category).Where(bp => string.IsNullOrEmpty(normalizedSearch)
+                                                                                                          || bp.Title!.ToLower().Contains(normalizedSearch)
+                                                                                                          || bp.Tags.Any(t => t.Name!.ToLower().Contains(normalizedSearch))
+                                                                                                          || bp.Category!.Name!.ToLower().Contains(normalizedSearch)).ToListAsync();
+
+            return blogPosts;
+        }
     }
 }

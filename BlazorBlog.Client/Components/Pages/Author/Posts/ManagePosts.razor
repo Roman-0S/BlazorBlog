@@ -1,6 +1,10 @@
 ﻿@page "/author/posts/manage"
 
+@rendermode InteractiveServer
+
 @inject IBlogPostDTOService BlogService
+@inject ICategoryDTOService CategoryService
+@inject NavigationManager Nav
 
 
 <div>
@@ -9,15 +13,26 @@
 
         <div class="col-xl-6 col-lg-7  mb-4 mb-lg-0 hstack justify-content-between">
 
-            <h1 class="mb-0 me-4">Blog list</h1>
+            @if(isPublished)
+            {
+                <h1 class="mb-0 me-4">Published Blogs</h1>
+            }
+            else if (isDeleted)
+            {
+                <h1 class="mb-0 me-4">Deleted Blogs</h1>
+            }
+            else if (!isPublished && !isDeleted)
+            {
+                <h1 class="mb-0 me-4">Drafted Blogs</h1>
+            }
 
             <div class="text-end">
 
-                <button class="btn btn-sm btn-primary me-2">Published</button>
+                <button class="btn btn-sm btn-primary me-2" @onclick="ShowPublished">Published</button>
 
-                <button class="btn btn-sm btn-info me-2">Draft</button>
+                <button class="btn btn-sm btn-info me-2" @onclick="ShowDrafts">Draft</button>
 
-                <button class="btn btn-sm btn-danger me-2">Deleted</button>
+                <button class="btn btn-sm btn-danger me-2" @onclick="ShowDeleted">Deleted</button>
 
             </div>
 
@@ -25,28 +40,33 @@
 
         <div class="col-xl-2 col-lg-2 col-sm-5">
 
-            <select class="form-select">
+            <InputSelect class="form-select" @bind-Value="CategoryId" @bind-Value:after="HandleCategoryChange">
 
-                <option>All categories</option>
-                <option>Inspiration</option>
-                <option>Brand strategy</option>
-                <option>Advertisement</option>
-                <option>Ecommerce</option>
-                <option>Travel &amp; Vacation</option>
+                <option value="">All categories</option>
 
-            </select>
+                @foreach (CategoryDTO category in categories)
+                {
+                    <option value="@category.Id">@category.Name</option>
+                }
+
+            </InputSelect>
 
         </div>
 
         <div class="col-xl-4 col-lg-3 col-sm-7">
 
-            <div class="position-relative">
+            <form @onsubmit="HandleSearch">
 
-                <i class="ai-search position-absolute top-50 start-0 translate-middle-y ms-3"></i>
+                <div class="position-relative">
 
-                <input class="form-control ps-5" type="search" placeholder="Enter keyword">
+                    <i class="ai-search position-absolute top-50 start-0 translate-middle-y ms-3"></i>
 
-            </div>
+                    <InputText class="form-control ps-5" type="text" placeholder="Enter keyword" @bind-Value="searchInput" />
+
+                </div>
+
+            </form>
+
 
         </div>
 
@@ -56,7 +76,7 @@
 
         @foreach (BlogPostDTO blogPost in blogPosts)
         {
-            <BlogPostCard BlogPost="blogPost" />
+            <BlogPostCard BlogPost="blogPost" OnDelete="HandleDelete" />
         }
 
     </div>
@@ -69,7 +89,11 @@
 
     #region parameters
 
+    [SupplyParameterFromQuery]
+    public int? CategoryId { get; set; }
 
+    [SupplyParameterFromQuery]
+    public string? SearchTerm { get; set; }
 
     #endregion
 
@@ -77,6 +101,14 @@
     #region state
 
     private IEnumerable<BlogPostDTO> blogPosts = [];
+
+    private IEnumerable<CategoryDTO> categories = [];
+
+    private bool isPublished = true;
+
+    private bool isDeleted;
+
+    private string? searchInput;
 
     #endregion
 
@@ -86,6 +118,140 @@
     protected override async Task OnInitializedAsync()
     {
         blogPosts = await BlogService.GetBlogPostsAsync();
+
+        categories = await CategoryService.GetCategoriesAsync();
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (isPublished)
+        {
+            if (!string.IsNullOrWhiteSpace(SearchTerm))
+            {
+                searchInput = SearchTerm;
+                CategoryId = null;
+
+                blogPosts = await BlogService.SearchBlogPostsAsync(SearchTerm);
+            }
+            else if (CategoryId is not null or 0)
+            {
+                blogPosts = await BlogService.GetBlogPostsByCategoryIdAsync(CategoryId.Value);
+            }
+            else
+            {
+                blogPosts = await BlogService.GetBlogPostsAsync();
+            }
+
+            blogPosts = blogPosts.Where(bp => bp.IsPublished == true);
+        }
+        else if (isDeleted)
+        {
+            if (!string.IsNullOrWhiteSpace(SearchTerm))
+            {
+                searchInput = SearchTerm;
+                CategoryId = null;
+
+                blogPosts = await BlogService.SearchBlogPostsAsync(SearchTerm);
+            }
+            else if (CategoryId is not null or 0)
+            {
+                blogPosts = await BlogService.GetBlogPostsByCategoryIdAsync(CategoryId.Value);
+            }
+            else
+            {
+                blogPosts = await BlogService.GetBlogPostsAsync();
+            }
+
+            blogPosts = blogPosts.Where(bp => bp.IsDeleted == true);
+        }
+        else if (!isDeleted && !isPublished)
+        {
+            if (!string.IsNullOrWhiteSpace(SearchTerm))
+            {
+                searchInput = SearchTerm;
+                CategoryId = null;
+
+                blogPosts = await BlogService.SearchBlogPostsAsync(SearchTerm);
+            }
+            else if (CategoryId is not null or 0)
+            {
+                blogPosts = await BlogService.GetBlogPostsByCategoryIdAsync(CategoryId.Value);
+            }
+            else
+            {
+                blogPosts = await BlogService.GetBlogPostsAsync();
+            }
+
+            blogPosts = blogPosts.Where(bp => bp.IsDeleted == false && bp.IsPublished == false);
+        }
+
+    }
+
+    private async Task HandleDelete(BlogPostDTO blogPost)
+    {
+        try
+        {
+            await BlogService.UpdateBlogPostAsync(blogPost);
+
+            blogPosts = await BlogService.GetBlogPostsAsync();
+
+            blogPosts = blogPosts.Where(bp => bp.IsPublished == true);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            throw;
+        }
+    }
+
+    private void HandleCategoryChange()
+    {
+        Dictionary<string, object?> queryParameters = new Dictionary<string, object?>()
+        {
+            { nameof(CategoryId), CategoryId },
+            { nameof(SearchTerm), null },
+        };
+
+        string url = Nav.GetUriWithQueryParameters(queryParameters);
+
+        Nav.NavigateTo(url);
+    }
+
+    private void HandleSearch()
+    {
+        Dictionary<string, object?> queryParameters = new Dictionary<string, object?>()
+        {
+            { nameof(CategoryId), null },
+            { nameof(SearchTerm), searchInput },
+        };
+
+        string url = Nav.GetUriWithQueryParameters(queryParameters);
+
+        Nav.NavigateTo(url);
+    }
+
+    private async void ShowPublished()
+    {
+        isPublished = true;
+        isDeleted = false;
+
+        await OnParametersSetAsync();
+    }
+
+    private async void ShowDeleted()
+    {
+        isPublished = false;
+        isDeleted = true;
+
+        await OnParametersSetAsync();
+    }
+
+    private async void ShowDrafts()
+    {
+        isPublished = false;
+        isDeleted = false;
+
+        await OnParametersSetAsync();
     }
 
     #endregion
