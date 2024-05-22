@@ -80,7 +80,7 @@
 
         @foreach (BlogPostDTO blogPost in blogPosts)
         {
-            <BlogPostCard BlogPost="blogPost" OnDelete="HandleDelete" />
+            <BlogPostCard BlogPost="blogPost" isDeleted="isDeleted" OnDelete="HandleDelete" OnRecover="HandleRecover" />
         }
 
     </div>
@@ -197,9 +197,22 @@
         {
             await BlogService.UpdateBlogPostAsync(blogPost);
 
-            blogPosts = await BlogService.GetBlogPostsAsync();
+            await OnParametersSetAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            throw;
+        }
+    }
 
-            blogPosts = blogPosts.Where(bp => bp.IsPublished == true);
+    private async Task HandleRecover(BlogPostDTO blogPost)
+    {
+        try
+        {
+            await BlogService.UpdateBlogPostAsync(blogPost);
+
+            await OnParametersSetAsync();
         }
         catch (Exception ex)
         {

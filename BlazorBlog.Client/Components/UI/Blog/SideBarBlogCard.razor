@@ -1,0 +1,52 @@
+﻿@using BlazorBlog.Client.Helpers
+@if (blogPost is not null)
+{
+
+    <div>
+
+        <article class="position-relative d-flex align-items-center mb-4">
+
+            <img class="rounded" src="@(string.IsNullOrEmpty(blogPost.ImageURL) ? ImageHelper.DefaultBlogImage : blogPost.ImageURL)" width="92" alt="Post image">
+
+            <div class="ps-3">
+
+                <h4 class="h6 mb-2">
+                    <a class="stretched-link" href="#">@blogPost.Title</a>
+                </h4>
+
+                <span class="fs-sm text-body-secondary">@blogPost.Created</span>
+
+            </div>
+
+        </article>
+
+    </div>
+
+}
+
+
+
+
+@code {
+    #region parameters
+
+    [Parameter, EditorRequired]
+    public BlogPostDTO? blogPost { get; set; }
+
+    #endregion
+
+
+    #region state
+
+
+
+    #endregion
+
+
+    #region methods
+
+
+
+    #endregion
+
+}

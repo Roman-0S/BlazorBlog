@@ -7,6 +7,8 @@
 @using BlazorBlog.Client.Services.Interfaces
 
 @inject IBlogPostDTOService BlogService
+@inject ICategoryDTOService CategoryService
+@inject NavigationManager Nav
 
 
 <PageTitle>BlazorBlog | Home</PageTitle>
@@ -25,7 +27,7 @@
 
                 @foreach (BlogPostDTO blogPost in blogPosts)
                 {
-                    <BlogPostCard BlogPost="blogPost" OnDelete="HandleDelete" />
+                    <BlogPostCard BlogPost="blogPost" OnDelete="HandleDelete" isDeleted="isDeleted" OnRecover="HandleRecover" />
                 }
 
             </div>
@@ -74,99 +76,73 @@
                 <div class="offcanvas-body">
 
                     <!-- Search box -->
-                    <div class="position-relative mb-4 mb-lg-5">
-                        <i class="ai-search position-absolute top-50 start-0 translate-middle-y ms-3"></i>
-                        <input class="form-control ps-5" type="search" placeholder="Enter keyword">
-                    </div>
+                    <form @onsubmit="HandleSearch">
+
+                        <div class="position-relative mb-4 mb-lg-5">
+
+                            <i class="ai-search position-absolute top-50 start-0 translate-middle-y ms-3"></i>
+
+                            <InputText class="form-control ps-5" type="text" placeholder="Enter keyword" @bind-Value="searchInput" />
+
+                        </div>
+
+                    </form>
+
 
                     <!-- Category links -->
                     <h4 class="pt-1 pt-lg-0 mt-lg-n2">Categories:</h4>
                     <ul class="nav flex-column mb-lg-5 mb-4">
                         <li class="mb-2">
-                            <a class="nav-link d-flex p-0 active" href="#">
+                            <button class="nav-link d-flex p-0 active" value="">
                                 All categories
-                                <span class="fs-sm text-body-secondary ms-2">(110)</span>
-                            </a>
+                            </button>
                         </li>
-                        <li class="mb-2">
-                            <a class="nav-link d-flex p-0" href="#">
-                                Inspiration
-                                <span class="fs-sm text-body-secondary ms-2">(34)</span>
-                            </a>
-                        </li>
-                        <li class="mb-2">
-                            <a class="nav-link d-flex p-0" href="#">
-                                Brand strategy
-                                <span class="fs-sm text-body-secondary ms-2">(8)</span>
-                            </a>
-                        </li>
-                        <li class="mb-2">
-                            <a class="nav-link d-flex p-0" href="#">
-                                Advertisement
-                                <span class="fs-sm text-body-secondary ms-2">(45)</span>
-                            </a>
-                        </li>
-                        <li class="mb-2">
-                            <a class="nav-link d-flex p-0" href="#">
-                                Ecommerce
-                                <span class="fs-sm text-body-secondary ms-2">(17)</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a class="nav-link d-flex p-0" href="#">
-                                Travel &amp; Vacation
-                                <span class="fs-sm text-body-secondary ms-2">(6)</span>
-                            </a>
-                        </li>
+
+                        @foreach (CategoryDTO category in categories.OrderByDescending(c => c.Posts.Count()))
+                        {
+                            <li class="mb-2 hstack">
+
+                                <button class="nav-link d-flex p-0" value="@category.Id">@category.Name</button>
+
+                                <span class="fs-sm text-body-secondary ms-2">(@category.Posts.Count())</span>
+
+                            </li>
+                        }
+
                     </ul>
 
                     <!-- Featured posts widget -->
                     <h4 class="pt-3 pt-lg-0 pb-1">Trending posts:</h4>
                     <div class="mb-lg-5 mb-4">
-                        <article class="position-relative d-flex align-items-center mb-4">
-                            <img class="rounded" src="assets/img/blog/sidebar/01.jpg" width="92" alt="Post image">
-                            <div class="ps-3">
-                                <h4 class="h6 mb-2">
-                                    <a class="stretched-link" href="blog-single-v1.html">Instagram trends that will definitely work</a>
-                                </h4>
-                                <span class="fs-sm text-body-secondary">13 hours ago</span>
-                            </div>
-                        </article>
-                        <article class="position-relative d-flex align-items-center mb-4">
-                            <img class="rounded" src="assets/img/blog/sidebar/02.jpg" width="92" alt="Post image">
-                            <div class="ps-3">
-                                <h4 class="h6 mb-2">
-                                    <a class="stretched-link" href="blog-single-v2.html">A session with a psychologist</a>
-                                </h4>
-                                <span class="fs-sm text-body-secondary">May 12, 2022</span>
-                            </div>
-                        </article>
-                        <article class="position-relative d-flex align-items-center">
-                            <img class="rounded" src="assets/img/blog/sidebar/03.jpg" width="92" alt="Post image">
-                            <div class="ps-3">
-                                <h4 class="h6 mb-2">
-                                    <a class="stretched-link" href="blog-single-v3.html">How to look for inspiration for new goals</a>
-                                </h4>
-                                <span class="fs-sm text-body-secondary">June 10, 2022</span>
-                            </div>
-                        </article>
+
+                        @foreach (BlogPostDTO blogPost in blogPosts.OrderByDescending(bp => bp.Comments.Count()))
+                        {
+                            int i = 0;
+
+                            <SideBarBlogCard blogPost="blogPost" />
+
+                            if (i == 3)
+                            {
+                                break;
+                            }
+
+                            i++;
+                        }
+
                     </div>
 
                     <!-- Social buttons -->
-                    <h4 class="pt-3 pt-lg-0 pb-1">Join us:</h4>
+                    <h4 class="pt-3 pt-lg-0 pb-1">Find Me:</h4>
                     <div class="d-flex mt-n3 ms-n3 mb-lg-5 mb-4 pb-3 pb-lg-0">
-                        <a class="btn btn-secondary btn-icon btn-sm btn-instagram rounded-circle mt-3 ms-3" href="#" aria-label="Instagram">
-                            <i class="ai-instagram"></i>
+                        
+                        <a class="btn btn-secondary btn-icon btn-sm btn-github rounded-circle mt-3 ms-3" href="https://github.com/Roman-0S" target="_blank" aria-label="Github">
+                            <i class="ai-github"></i>
                         </a>
-                        <a class="btn btn-secondary btn-icon btn-sm btn-facebook rounded-circle mt-3 ms-3" href="#" aria-label="Facebook">
-                            <i class="ai-facebook"></i>
+                        
+                        <a class="btn btn-secondary btn-icon btn-sm btn-linkedin rounded-circle mt-3 ms-3" href="https://www.linkedin.com/in/roman-steeledev/" target="_blank" aria-label="LinkedIn">
+                            <i class="ai-linkedin"></i>
                         </a>
-                        <a class="btn btn-secondary btn-icon btn-sm btn-telegram rounded-circle mt-3 ms-3" href="#" aria-label="Telegram">
-                            <i class="ai-telegram"></i>
-                        </a>
-                        <a class="btn btn-secondary btn-icon btn-sm btn-x rounded-circle mt-3 ms-3" href="#" aria-label="X">
-                            <i class="ai-x"></i>
-                        </a>
+
                     </div>
 
                     <!-- Banner -->
@@ -189,7 +165,11 @@
 
     #region parameters
 
+    [SupplyParameterFromQuery]
+    public int? CategoryId { get; set; }
 
+    [SupplyParameterFromQuery]
+    public string? SearchTerm { get; set; }
 
     #endregion
 
@@ -197,6 +177,12 @@
     #region state
 
     private IEnumerable<BlogPostDTO> blogPosts = [];
+
+    private IEnumerable<CategoryDTO> categories = [];
+
+    private bool isDeleted = false;
+
+    private string? searchInput;
 
     #endregion
 
@@ -206,6 +192,25 @@
     protected override async Task OnInitializedAsync()
     {
         blogPosts = await BlogService.GetBlogPostsAsync();
+
+        blogPosts = blogPosts.Where(bp => bp.IsPublished == true);
+
+        categories = await CategoryService.GetCategoriesAsync();
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (!string.IsNullOrWhiteSpace(SearchTerm))
+        {
+            searchInput = SearchTerm;
+            CategoryId = null;
+
+            blogPosts = await BlogService.SearchBlogPostsAsync(SearchTerm);
+        }
+        else
+        {
+            blogPosts = await BlogService.GetBlogPostsAsync();
+        }
 
         blogPosts = blogPosts.Where(bp => bp.IsPublished == true);
     }
@@ -225,6 +230,24 @@
             Console.WriteLine(ex);
             throw;
         }
+    }
+
+    private void HandleRecover()
+    {
+
+    }
+
+    private void HandleSearch()
+    {
+        Dictionary<string, object?> queryParameters = new Dictionary<string, object?>()
+        {
+            { nameof(CategoryId), null },
+            { nameof(SearchTerm), searchInput },
+        };
+
+        string url = Nav.GetUriWithQueryParameters(queryParameters);
+
+        Nav.NavigateTo(url);
     }
 
     #endregion
