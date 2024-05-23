@@ -1,0 +1,237 @@
+﻿@using BlazorBlog.Client.Helpers
+
+
+@if (BlogPost is not null)
+{
+    @if (isDeleted)
+    {
+
+        <article class="row g-0 border-0 mb-4">
+
+            <a class="col-sm-5 bg-repeat-0 bg-size-cover bg-position-center rounded-5" href="#" style="background-image: url(@(string.IsNullOrEmpty(BlogPost.ImageURL) ? ImageHelper.DefaultBlogImage : BlogPost.ImageURL)); min-height: 16rem" aria-label="Post image"></a>
+
+            <div class="col-sm-7">
+
+                <div class="pt-4 pb-sm-4 ps-sm-4 pe-lg-4">
+
+                    <h3>
+                        <a href="#">@BlogPost.Title</a>
+                    </h3>
+
+                    <p class="d-sm-none d-md-block">@BlogPost.Abstract</p>
+
+                    <div class="d-flex flex-wrap align-items-center mt-n2">
+
+                        <a class="nav-link text-body-secondary fs-sm fw-normal d-flex align-items-end p-0 mt-2" href="#">
+
+                            12
+
+                            <i class="ai-message fs-lg ms-1"></i>
+
+                        </a>
+
+                        <span class="fs-xs opacity-20 mt-2 mx-3">|</span>
+
+                        <span class="fs-sm text-body-secondary mt-2">@BlogPost.Created</span>
+
+                        <span class="fs-xs opacity-20 mt-2 mx-3">|</span>
+
+                        <a class="badge text-nav fs-xs border mt-2" href="#">@BlogPost.Category?.Name</a>
+
+                    </div>
+
+                    <AuthorizeView Roles="Author">
+
+                        <div class="mt-2">
+
+                            <button class="btn btn-sm btn-primary me-2" @onclick="RecoverPost">Recover</button>
+
+                        </div>
+
+                    </AuthorizeView>
+
+                </div>
+
+            </div>
+
+        </article>
+
+    }
+    else
+    {
+
+        @if (!Delete)
+        {
+
+            <article class="row g-0 border-0 mb-4">
+
+                <a class="col-sm-5 bg-repeat-0 bg-size-cover bg-position-center rounded-5" href="/posts/@BlogPost.Slug" style="background-image: url(@(string.IsNullOrEmpty(BlogPost.ImageURL) ? ImageHelper.DefaultBlogImage : BlogPost.ImageURL)); min-height: 16rem" aria-label="Post image"></a>
+
+                <div class="col-sm-7">
+
+                    <div class="pt-4 pb-sm-4 ps-sm-4 pe-lg-4">
+
+                        <h3>
+                            <a href="/posts/@BlogPost.Slug">@BlogPost.Title</a>
+                        </h3>
+
+                        <p class="d-sm-none d-md-block">@BlogPost.Abstract</p>
+
+                        <div class="d-flex flex-wrap align-items-center mt-n2">
+
+                            <a class="nav-link text-body-secondary fs-sm fw-normal d-flex align-items-end p-0 mt-2" href="#">
+
+                                12
+
+                                <i class="ai-message fs-lg ms-1"></i>
+
+                            </a>
+
+                            <span class="fs-xs opacity-20 mt-2 mx-3">|</span>
+
+                            <span class="fs-sm text-body-secondary mt-2">@BlogPost.Created</span>
+
+                            <span class="fs-xs opacity-20 mt-2 mx-3">|</span>
+
+                            <a class="badge text-nav fs-xs border mt-2" href="#">@BlogPost.Category?.Name</a>
+
+                        </div>
+
+                        <AuthorizeView Roles="Author">
+
+                            <div class="mt-2">
+
+                                <a class="btn btn-sm btn-primary me-2" href="/author/posts/edit/@BlogPost.Id">Edit</a>
+
+                                <button class="btn btn-sm btn-danger" @onclick="() => Delete = !Delete">Delete</button>
+
+                            </div>
+
+                        </AuthorizeView>
+
+                    </div>
+
+                </div>
+
+            </article>
+
+        }
+        else if (Delete)
+        {
+
+            <article class="row g-0 border-0 mb-4">
+
+                <a class="col-sm-5 bg-repeat-0 bg-size-cover bg-position-center rounded-5" href="/posts/@BlogPost.Slug" style="background-image: url(@(string.IsNullOrEmpty(BlogPost.ImageURL) ? ImageHelper.DefaultBlogImage : BlogPost.ImageURL)); min-height: 16rem" aria-label="Post image"></a>
+
+                <div class="col-sm-7">
+
+                    <div class="pt-4 pb-sm-4 ps-sm-4 pe-lg-4">
+
+                        <h3>
+                            <a href="/posts/@BlogPost.Slug">@BlogPost.Title</a>
+                        </h3>
+
+                        <p class="d-sm-none d-md-block">@BlogPost.Abstract</p>
+
+                        <div class="d-flex flex-wrap align-items-center mt-n2">
+
+                            <a class="nav-link text-body-secondary fs-sm fw-normal d-flex align-items-end p-0 mt-2" href="#">
+
+                                12
+
+                                <i class="ai-message fs-lg ms-1"></i>
+
+                            </a>
+
+                            <span class="fs-xs opacity-20 mt-2 mx-3">|</span>
+
+                            <span class="fs-sm text-body-secondary mt-2">@BlogPost.Created</span>
+
+                            <span class="fs-xs opacity-20 mt-2 mx-3">|</span>
+
+                            <a class="badge text-nav fs-xs border mt-2" href="#">@BlogPost.Category?.Name</a>
+
+                        </div>
+
+                        <AuthorizeView Roles="Author">
+
+                            <div class="mt-2">
+
+                                <div class="text-danger mb-2">
+                                    Are you sure you want to delete this post?
+                                </div>
+
+                                <button class="btn btn-sm btn-danger me-2" @onclick="DeletePost">Delete</button>
+
+                                <button class="btn btn-sm btn-outline-secondary" @onclick="() => Delete = !Delete">Cancel</button>
+
+                            </div>
+
+                        </AuthorizeView>
+
+                    </div>
+
+                </div>
+
+            </article>
+
+        }
+
+    }
+
+
+}
+
+
+
+@code {
+
+    #region parameters
+
+    [Parameter, EditorRequired]
+    public BlogPostDTO? BlogPost { get; set; }
+
+    [Parameter, EditorRequired]
+    public bool isDeleted { get; set; }
+
+    [Parameter, EditorRequired]
+    public EventCallback<BlogPostDTO> OnDelete { get; set; }
+
+    [Parameter, EditorRequired]
+    public EventCallback<BlogPostDTO> OnRecover { get; set; }
+
+    #endregion
+
+
+    #region state
+
+    private bool Delete;
+
+    #endregion
+
+
+    #region methods
+
+    private async void DeletePost()
+    {
+        BlogPost!.IsDeleted = true;
+
+        BlogPost!.IsPublished = false;
+
+        Delete = false;
+
+        await OnDelete.InvokeAsync(BlogPost);
+    }
+
+    private async void RecoverPost()
+    {
+        BlogPost!.IsDeleted = false;
+
+        BlogPost!.IsPublished = false;
+
+        await OnRecover.InvokeAsync(BlogPost);
+    }
+
+    #endregion
+
+}

@@ -15,6 +15,5 @@ namespace BlazorBlog.Services.Interfaces
         Task UpdateCategoryAsync(Category category);
 
         Task DeleteCategoryAsync(int categoryId);
-
     }
 }

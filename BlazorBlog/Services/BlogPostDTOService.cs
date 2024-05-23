@@ -69,6 +69,13 @@ namespace BlazorBlog.Services
             return blogPosts.Select(bp => bp.ToDTO());
         }
 
+        public async Task<IEnumerable<BlogPostDTO>> GetPopularBlogPostsAsync(int count)
+        {
+            IEnumerable<BlogPost> blogPosts = await repository.GetPopularBlogPostsAsync(count);
+
+            return blogPosts.Select(bp => bp.ToDTO());
+        }
+
         public async Task<IEnumerable<BlogPostDTO>> SearchBlogPostsAsync(string searchTerm)
         {
             IEnumerable<BlogPost> blogPosts = await repository.SearchBlogPostsAsync(searchTerm);

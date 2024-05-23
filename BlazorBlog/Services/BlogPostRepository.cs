@@ -214,7 +214,7 @@ namespace BlazorBlog.Services
         {
             using ApplicationDbContext context = contextFactory.CreateDbContext();
 
-            BlogPost? blogPost = await context.BlogPosts.Where(bp => bp.IsPublished == true && bp.IsDeleted == false)
+            BlogPost? blogPost = await context.BlogPosts.Where(bp => bp.IsPublished && !bp.IsDeleted)
                                                         .Include(bp => bp.Category)
                                                         .Include(bp => bp.Tags)
                                                         .Include(bp => bp.Comments)
@@ -222,6 +222,18 @@ namespace BlazorBlog.Services
                                                         .FirstOrDefaultAsync(bp => bp.Slug == slug);
 
             return blogPost;
+        }
+
+        public async Task<IEnumerable<BlogPost>> GetPopularBlogPostsAsync(int count)
+        {
+            using ApplicationDbContext context = contextFactory.CreateDbContext();
+
+            IEnumerable<BlogPost> blogPosts = await context.BlogPosts.Where(bp => bp.IsPublished && !bp.IsDeleted)
+                                                                     .Include(bp => bp.Comments)
+                                                                     .OrderByDescending(bp => bp.Comments.Count)
+                                                                     .Take(count).ToListAsync();
+
+            return blogPosts;
         }
     }
 }

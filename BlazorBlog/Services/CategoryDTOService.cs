@@ -46,9 +46,9 @@ namespace BlazorBlog.Services
             return category?.ToDTO();
         }
 
-        public async Task<IEnumerable<CategoryDTO>> GetPopularCategoriesAsync(int amount)
+        public async Task<IEnumerable<CategoryDTO>> GetPopularCategoriesAsync(int count)
         {
-            IEnumerable<Category> categories = await repository.GetPopularCategoriesAsync(amount);
+            IEnumerable<Category> categories = await repository.GetPopularCategoriesAsync(count);
 
             return categories.Select(c => c.ToDTO());
         }

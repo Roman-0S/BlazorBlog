@@ -8,6 +8,8 @@ namespace BlazorBlog.Services.Interfaces
 
         Task<IEnumerable<BlogPost>> GetBlogPostsAsync();
 
+        Task<IEnumerable<BlogPost>> GetPopularBlogPostsAsync(int count);
+
         Task<BlogPost?> GetBlogPostBySlugAsync(string slug); 
 
         Task UpdateBlogPostAsync(BlogPost blogPost);

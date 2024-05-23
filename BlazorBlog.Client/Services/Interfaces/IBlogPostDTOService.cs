@@ -14,6 +14,8 @@ namespace BlazorBlog.Client.Services.Interfaces
 
         Task<BlogPostDTO?> GetBlogPostBySlugAsync(string slug);
 
+        Task<IEnumerable<BlogPostDTO>> GetPopularBlogPostsAsync(int count);
+
         Task<IEnumerable<BlogPostDTO>> GetBlogPostsByCategoryIdAsync(int categoryId);
 
         Task<IEnumerable<BlogPostDTO>> SearchBlogPostsAsync(string searchTerm);
