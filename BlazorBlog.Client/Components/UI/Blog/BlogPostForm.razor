@@ -168,7 +168,7 @@
                 new { text = "C#", value = "csharp" },
                 new { text = "Razor", value = "razor" },
                 new { text = "JSON", value = "json" },
-    }
+        }
         },
         { "codesample_global_prismjs", true },
         { "promotion", false },
@@ -185,6 +185,8 @@
         try
         {
             categories = await CategoryService.GetCategoriesAsync();
+
+            tagNames = string.Join(", ", Post!.Tags.Select(t => t.Name));
         }
         catch (Exception ex)
         {

@@ -90,7 +90,7 @@ namespace BlazorBlog.Services
         {
             using ApplicationDbContext context = contextFactory.CreateDbContext();
 
-            BlogPost? blogPost = await context.BlogPosts.FirstOrDefaultAsync(bp => bp.Id == blogPostId);
+            BlogPost? blogPost = await context.BlogPosts.Include(bp => bp.Tags).FirstOrDefaultAsync(bp => bp.Id == blogPostId);
 
             return blogPost;
         }

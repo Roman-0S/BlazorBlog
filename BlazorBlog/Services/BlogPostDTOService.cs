@@ -118,6 +118,8 @@ namespace BlazorBlog.Services
 
         public async Task UpdateBlogPostAsync(BlogPostDTO blogPostDTO)
         {
+            await repository.RemoveTagsFromBlogPostAsync(blogPostDTO.Id);
+
             BlogPost? blogPostToUpdate = await repository.GetBlogPostByIdAsync(blogPostDTO.Id);
 
             if (blogPostToUpdate is not null)
@@ -142,12 +144,12 @@ namespace BlazorBlog.Services
                     blogPostToUpdate.Image = UploadHelper.GetImageUpload(blogPostDTO.ImageURL);
                 }
 
+                await repository.UpdateBlogPostAsync(blogPostToUpdate);
+
+
                 IEnumerable<string> tagNames = blogPostDTO.Tags.Select(t => t.Name!);
 
-
-
-
-                await repository.UpdateBlogPostAsync(blogPostToUpdate);
+                await repository.AddTagsToBlogPostAsync(blogPostToUpdate.Id, tagNames);
             }
 
         }
