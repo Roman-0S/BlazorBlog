@@ -86,9 +86,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        blogPosts = await BlogService.GetBlogPostsAsync();
-
-        blogPosts = blogPosts.Where(bp => bp.IsPublished == true);
+        blogPosts = await BlogService.GetPublishedBlogPostsAsync();
 
         categories = await CategoryService.GetCategoriesAsync();
     }

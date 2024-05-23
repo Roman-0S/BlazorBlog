@@ -227,6 +227,8 @@
 
             Post!.Tags = [.. listOfNames.Select(name => new TagDTO() { Name = name })];
 
+            tagNames = string.Empty;
+
             await OnSubmit.InvokeAsync(Post);
         }
         catch (Exception ex)

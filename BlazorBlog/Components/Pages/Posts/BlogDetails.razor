@@ -53,11 +53,7 @@ else
 
         <p class="fs-lg pt-2 pt-sm-3">@blogPost.Abstract</p>
 
-        <figure class="figure">
-
-            <img class="figure-img rounded-5 my-3" src="@(string.IsNullOrEmpty(blogPost.ImageURL) ? ImageHelper.DefaultBlogImage : blogPost.ImageURL)" alt="Image">
-
-        </figure>
+        <img class="img-fluid rounded-5 my-3" src="@(string.IsNullOrEmpty(blogPost.ImageURL) ? ImageHelper.DefaultBlogImage : blogPost.ImageURL)" alt="Image">
 
         <p class="fs-lg pb-2 pb-lg-0 mb-4 mb-lg-5">@((MarkupString)blogPost.Content!)</p>
 

@@ -7,6 +7,9 @@ namespace BlazorBlog.Services
 {
     public class CategoryRepository(IDbContextFactory<ApplicationDbContext> contextFactory) : ICategoryRepository
     {
+
+        #region CreateCategories
+
         public async Task<Category> CreateCategoryAsync(Category category)
         {
             using ApplicationDbContext context = contextFactory.CreateDbContext();
@@ -17,18 +20,10 @@ namespace BlazorBlog.Services
             return category;
         }
 
-        public async Task DeleteCategoryAsync(int categoryId)
-        {
-            using ApplicationDbContext context = contextFactory.CreateDbContext();
+        #endregion
 
-            Category? category = await context.Categories.FirstOrDefaultAsync(c => c.Id == categoryId);
 
-            if (category is not null)
-            {
-                context.Categories.Remove(category);
-                await context.SaveChangesAsync();
-            }
-        }
+        #region GetCategories
 
         public async Task<IEnumerable<Category>> GetCategoriesAsync()
         {
@@ -37,15 +32,6 @@ namespace BlazorBlog.Services
             IEnumerable<Category> categories = await context.Categories.Include(c => c.Posts).ToListAsync();
 
             return categories;
-        }
-
-        public async Task<Category?> GetCategoryByIdAsync(int categoryId)
-        {
-            using ApplicationDbContext context = contextFactory.CreateDbContext();
-
-            Category? category = await context.Categories.FirstOrDefaultAsync(c => c.Id == categoryId);
-
-            return category;
         }
 
         public async Task<IEnumerable<Category>> GetPopularCategoriesAsync(int count)
@@ -60,6 +46,20 @@ namespace BlazorBlog.Services
             return categories;
         }
 
+        public async Task<Category?> GetCategoryByIdAsync(int categoryId)
+        {
+            using ApplicationDbContext context = contextFactory.CreateDbContext();
+
+            Category? category = await context.Categories.FirstOrDefaultAsync(c => c.Id == categoryId);
+
+            return category;
+        }
+
+        #endregion
+
+
+        #region UpdateCategories
+
         public async Task UpdateCategoryAsync(Category category)
         {
             using ApplicationDbContext context = contextFactory.CreateDbContext();
@@ -72,5 +72,26 @@ namespace BlazorBlog.Services
                 await context.SaveChangesAsync();
             }
         }
+
+        #endregion
+
+
+        #region DeleteCategories
+
+        public async Task DeleteCategoryAsync(int categoryId)
+        {
+            using ApplicationDbContext context = contextFactory.CreateDbContext();
+
+            Category? category = await context.Categories.FirstOrDefaultAsync(c => c.Id == categoryId);
+
+            if (category is not null)
+            {
+                context.Categories.Remove(category);
+                await context.SaveChangesAsync();
+            }
+        }
+
+        #endregion
+
     }
 }

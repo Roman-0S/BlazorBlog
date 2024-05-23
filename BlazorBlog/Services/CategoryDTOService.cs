@@ -8,6 +8,9 @@ namespace BlazorBlog.Services
 {
     public class CategoryDTOService(ICategoryRepository repository) : ICategoryDTOService
     {
+
+        #region CreateCategories
+
         public async Task<CategoryDTO> CreateCategoryAsync(CategoryDTO category)
         {
             Category newCategory = new Category()
@@ -27,14 +30,21 @@ namespace BlazorBlog.Services
 
         }
 
-        public async Task DeleteCategoryAsync(int categoryId)
-        {
-            await repository.DeleteCategoryAsync(categoryId);
-        }
+        #endregion
+
+
+        #region GetCategories
 
         public async Task<IEnumerable<CategoryDTO>> GetCategoriesAsync()
         {
             IEnumerable<Category> categories = await repository.GetCategoriesAsync();
+
+            return categories.Select(c => c.ToDTO());
+        }
+
+        public async Task<IEnumerable<CategoryDTO>> GetPopularCategoriesAsync(int count)
+        {
+            IEnumerable<Category> categories = await repository.GetPopularCategoriesAsync(count);
 
             return categories.Select(c => c.ToDTO());
         }
@@ -46,12 +56,10 @@ namespace BlazorBlog.Services
             return category?.ToDTO();
         }
 
-        public async Task<IEnumerable<CategoryDTO>> GetPopularCategoriesAsync(int count)
-        {
-            IEnumerable<Category> categories = await repository.GetPopularCategoriesAsync(count);
+        #endregion
 
-            return categories.Select(c => c.ToDTO());
-        }
+
+        #region UpdateCategories
 
         public async Task UpdateCategoryAsync(CategoryDTO category)
         {
@@ -71,5 +79,18 @@ namespace BlazorBlog.Services
                 await repository.UpdateCategoryAsync(categoryToUpdate);
             }
         }
+
+        #endregion
+
+
+        #region DeleteCategories
+
+        public async Task DeleteCategoryAsync(int categoryId)
+        {
+            await repository.DeleteCategoryAsync(categoryId);
+        }
+
+        #endregion
+
     }
 }

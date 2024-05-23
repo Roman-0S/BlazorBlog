@@ -8,6 +8,9 @@ namespace BlazorBlog.Services
 {
     public class BlogPostDTOService(IBlogPostRepository repository) : IBlogPostDTOService
     {
+
+        #region CreateBlogPosts
+
         public async Task<BlogPostDTO> CreateBlogPostAsync(BlogPostDTO blogPostDTO)
         {
             BlogPost blogPost = new BlogPost()
@@ -41,30 +44,28 @@ namespace BlazorBlog.Services
             return blogPost.ToDTO();
         }
 
-        public async Task<BlogPostDTO?> GetBlogPostByIdAsync(int blogPostId)
+        #endregion
+
+
+        #region GetBlogPosts
+
+        public async Task<IEnumerable<BlogPostDTO>> GetPublishedBlogPostsAsync()
         {
-            BlogPost? blogPost = await repository.GetBlogPostByIdAsync(blogPostId);
-
-            return blogPost?.ToDTO();
-        }
-
-        public async Task<BlogPostDTO?> GetBlogPostBySlugAsync(string slug)
-        {
-            BlogPost? blogPost = await repository.GetBlogPostBySlugAsync(slug);
-
-            return blogPost?.ToDTO();
-        }
-
-        public async Task<IEnumerable<BlogPostDTO>> GetBlogPostsAsync()
-        {
-            IEnumerable<BlogPost> blogPosts = await repository.GetBlogPostsAsync();
+            IEnumerable<BlogPost> blogPosts = await repository.GetPublishedBlogPostsAsync();
 
             return blogPosts.Select(bp => bp.ToDTO());
         }
 
-        public async Task<IEnumerable<BlogPostDTO>> GetBlogPostsByCategoryIdAsync(int categoryId)
+        public async Task<IEnumerable<BlogPostDTO>> GetDraftedBlogPostsAsync()
         {
-            IEnumerable<BlogPost> blogPosts = await repository.GetBlogPostsByCategoryIdAsync(categoryId);
+            IEnumerable<BlogPost> blogPosts = await repository.GetDraftedBlogPostsAsync();
+
+            return blogPosts.Select(bp => bp.ToDTO());
+        }
+
+        public async Task<IEnumerable<BlogPostDTO>> GetDeletedBlogPostsAsync()
+        {
+            IEnumerable<BlogPost> blogPosts = await repository.GetDeletedBlogPostsAsync();
 
             return blogPosts.Select(bp => bp.ToDTO());
         }
@@ -76,12 +77,44 @@ namespace BlazorBlog.Services
             return blogPosts.Select(bp => bp.ToDTO());
         }
 
+
+        #region GetBlogPostsBy
+
+        public async Task<BlogPostDTO?> GetBlogPostBySlugAsync(string slug)
+        {
+            BlogPost? blogPost = await repository.GetBlogPostBySlugAsync(slug);
+
+            return blogPost?.ToDTO();
+        }
+
+        public async Task<BlogPostDTO?> GetBlogPostByIdAsync(int blogPostId)
+        {
+            BlogPost? blogPost = await repository.GetBlogPostByIdAsync(blogPostId);
+
+            return blogPost?.ToDTO();
+        }
+
+        public async Task<IEnumerable<BlogPostDTO>> GetBlogPostsByCategoryIdAsync(int categoryId)
+        {
+            IEnumerable<BlogPost> blogPosts = await repository.GetBlogPostsByCategoryIdAsync(categoryId);
+
+            return blogPosts.Select(bp => bp.ToDTO());
+        }
+
         public async Task<IEnumerable<BlogPostDTO>> SearchBlogPostsAsync(string searchTerm)
         {
             IEnumerable<BlogPost> blogPosts = await repository.SearchBlogPostsAsync(searchTerm);
 
             return blogPosts.Select(bp => bp.ToDTO());
         }
+
+        #endregion
+
+
+        #endregion
+
+
+        #region UpdateBlogPosts
 
         public async Task UpdateBlogPostAsync(BlogPostDTO blogPostDTO)
         {
@@ -118,5 +151,8 @@ namespace BlazorBlog.Services
             }
 
         }
+
+        #endregion
+
     }
 }

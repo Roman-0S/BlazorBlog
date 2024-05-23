@@ -121,7 +121,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        blogPosts = await BlogService.GetBlogPostsAsync();
+        blogPosts = await BlogService.GetPublishedBlogPostsAsync();
 
         categories = await CategoryService.GetCategoriesAsync();
     }
@@ -136,17 +136,19 @@
                 CategoryId = null;
 
                 blogPosts = await BlogService.SearchBlogPostsAsync(SearchTerm);
+
+                blogPosts = blogPosts.Where(bp => bp.IsPublished == true);
             }
             else if (CategoryId is not null or 0)
             {
                 blogPosts = await BlogService.GetBlogPostsByCategoryIdAsync(CategoryId.Value);
+
+                blogPosts = blogPosts.Where(bp => bp.IsPublished == true);
             }
             else
             {
-                blogPosts = await BlogService.GetBlogPostsAsync();
+                blogPosts = await BlogService.GetPublishedBlogPostsAsync();
             }
-
-            blogPosts = blogPosts.Where(bp => bp.IsPublished == true);
         }
         else if (isDeleted)
         {
@@ -156,17 +158,19 @@
                 CategoryId = null;
 
                 blogPosts = await BlogService.SearchBlogPostsAsync(SearchTerm);
+
+                blogPosts = blogPosts.Where(bp => bp.IsDeleted == true);
             }
             else if (CategoryId is not null or 0)
             {
                 blogPosts = await BlogService.GetBlogPostsByCategoryIdAsync(CategoryId.Value);
+
+                blogPosts = blogPosts.Where(bp => bp.IsDeleted == true);
             }
             else
             {
-                blogPosts = await BlogService.GetBlogPostsAsync();
+                blogPosts = await BlogService.GetDeletedBlogPostsAsync();
             }
-
-            blogPosts = blogPosts.Where(bp => bp.IsDeleted == true);
         }
         else if (!isDeleted && !isPublished)
         {
@@ -176,17 +180,19 @@
                 CategoryId = null;
 
                 blogPosts = await BlogService.SearchBlogPostsAsync(SearchTerm);
+
+                blogPosts = blogPosts.Where(bp => bp.IsDeleted == false && bp.IsPublished == false);
             }
             else if (CategoryId is not null or 0)
             {
                 blogPosts = await BlogService.GetBlogPostsByCategoryIdAsync(CategoryId.Value);
+
+                blogPosts = blogPosts.Where(bp => bp.IsDeleted == false && bp.IsPublished == false);
             }
             else
             {
-                blogPosts = await BlogService.GetBlogPostsAsync();
+                blogPosts = await BlogService.GetDraftedBlogPostsAsync();
             }
-
-            blogPosts = blogPosts.Where(bp => bp.IsDeleted == false && bp.IsPublished == false);
         }
 
     }
