@@ -14,7 +14,7 @@ namespace BlazorBlog.Client.Services.Interfaces
 
         #region GetBlogPosts
 
-        Task<IEnumerable<BlogPostDTO>> GetPublishedBlogPostsAsync();
+        Task<PagedList<BlogPostDTO>> GetPublishedBlogPostsAsync(int page, int pageSize);
 
         Task<IEnumerable<BlogPostDTO>> GetDraftedBlogPostsAsync();
 

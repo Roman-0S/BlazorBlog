@@ -1,4 +1,6 @@
-﻿using BlazorBlog.Data;
+﻿using BlazorBlog.Client.Models;
+using BlazorBlog.Data;
+using BlazorBlog.Helpers.Extensions;
 using BlazorBlog.Models;
 using BlazorBlog.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -30,11 +32,15 @@ namespace BlazorBlog.Services
 
         #region GetBlogPosts
 
-        public async Task<IEnumerable<BlogPost>> GetPublishedBlogPostsAsync()
+        public async Task<PagedList<BlogPost>> GetPublishedBlogPostsAsync(int page, int pageSize)
         {
             using ApplicationDbContext context = contextFactory.CreateDbContext();
 
-            IEnumerable<BlogPost> blogPosts = await context.BlogPosts.Where(bp => bp.IsPublished && !bp.IsDeleted).Include(bp => bp.Category).Include(bp => bp.Comments).ToListAsync();
+            PagedList<BlogPost> blogPosts = await context.BlogPosts.Where(bp => bp.IsPublished && !bp.IsDeleted)
+                                                                     .Include(bp => bp.Category)
+                                                                     .Include(bp => bp.Comments)
+                                                                     .OrderByDescending(bp => bp.Created)
+                                                                     .ToPagedListAsync(page, pageSize);
 
             return blogPosts;
         }

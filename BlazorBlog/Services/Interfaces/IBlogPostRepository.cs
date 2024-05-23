@@ -1,4 +1,5 @@
-﻿using BlazorBlog.Models;
+﻿using BlazorBlog.Client.Models;
+using BlazorBlog.Models;
 
 namespace BlazorBlog.Services.Interfaces
 {
@@ -14,7 +15,7 @@ namespace BlazorBlog.Services.Interfaces
 
         #region GetBlogPosts
 
-        Task<IEnumerable<BlogPost>> GetPublishedBlogPostsAsync();
+        Task<PagedList<BlogPost>> GetPublishedBlogPostsAsync(int page, int pageSize);
 
         Task<IEnumerable<BlogPost>> GetDraftedBlogPostsAsync();
 

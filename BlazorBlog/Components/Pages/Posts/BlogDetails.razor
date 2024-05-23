@@ -1,6 +1,7 @@
 ﻿@page "/posts/{slug}"
 @layout SidebarLayout
 
+@using BlazorBlog.Client.Components.UI.Comments
 @using BlazorBlog.Components.Layout
 @using BlazorBlog.Client.Components.UI.Tags
 @using BlazorBlog.Client.Helpers
@@ -101,6 +102,9 @@ else
             </div>
         </div>
     </div>
+
+
+    <CommentArea @rendermode="InteractiveServer"/>
 
 }
 

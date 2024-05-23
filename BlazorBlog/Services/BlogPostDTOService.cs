@@ -49,11 +49,19 @@ namespace BlazorBlog.Services
 
         #region GetBlogPosts
 
-        public async Task<IEnumerable<BlogPostDTO>> GetPublishedBlogPostsAsync()
+        public async Task<PagedList<BlogPostDTO>> GetPublishedBlogPostsAsync(int page, int pageSize)
         {
-            IEnumerable<BlogPost> blogPosts = await repository.GetPublishedBlogPostsAsync();
+            PagedList<BlogPost> blogPosts = await repository.GetPublishedBlogPostsAsync(page, pageSize);
 
-            return blogPosts.Select(bp => bp.ToDTO());
+            PagedList<BlogPostDTO> dtos = new PagedList<BlogPostDTO>()
+            {
+                Page = blogPosts.Page,
+                TotalPages = blogPosts.TotalPages,
+                TotalItems = blogPosts.TotalItems,
+                Data = blogPosts.Data.Select(bp => bp.ToDTO()),
+            };
+
+            return dtos;
         }
 
         public async Task<IEnumerable<BlogPostDTO>> GetDraftedBlogPostsAsync()

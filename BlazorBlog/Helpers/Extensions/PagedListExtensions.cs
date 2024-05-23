@@ -5,7 +5,7 @@ namespace BlazorBlog.Helpers.Extensions
 {
     public static class PagedListExtensions
     {
-        public static async Task<PagedList<T>> ToPagedListAsync<T>(this IQueryable<T> query, int page, int pageSize) where T : class
+        public static async Task<PagedList<T>> ToPagedListAsync<T>(this IOrderedQueryable<T> query, int page, int pageSize) where T : class
         {
             int totalItems = query.Count();
 
