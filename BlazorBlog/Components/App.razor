@@ -34,6 +34,13 @@
     <script src="_content/TinyMCE.Blazor/tinymce-blazor.js"></script>
 
     <script src="_framework/blazor.web.js"></script>
+
+    <script>
+        Blazor.addEventListener("enhancedload", () => {
+            window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+            // use behavior: 'instant' to immediately load new page to the top rather than smoothly scrolling up
+        });
+    </script>
 </body>
 
 </html>
