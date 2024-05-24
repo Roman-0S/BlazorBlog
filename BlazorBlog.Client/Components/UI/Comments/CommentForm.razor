@@ -1,0 +1,90 @@
+﻿@inject NavigationManager Nav
+
+
+
+@if (Comment is not null)
+{
+
+    <div>
+
+        <EditForm Model="Comment" OnValidSubmit="HandleSubmit">
+
+            <DataAnnotationsValidator />
+
+            <div class="flex-fill vstack">
+
+                <TinyMCE.Blazor.Editor ScriptSrc="/tinymce/tinymce.min.js" @bind-Value="Comment.Content" Field="() => Comment.Content" ClassName="rich-text-editor" Conf="editorConfig"/>
+
+@*                 <InputTextArea @bind-Value="Comment.Content" />
+ *@
+                <ValidationMessage For="() => Comment.Content" />
+
+                <div class="text-end mt-3">
+                    <button class="btn btn-sm btn-primary"><i class="ai ai-circle-check"></i></button>
+                </div>
+
+            </div>
+
+
+        </EditForm>
+
+    </div>
+
+}
+
+
+
+
+
+
+@code {
+    #region parameters
+
+    [Parameter, EditorRequired]
+    public EventCallback<CommentDTO> OnSubmit { get; set; }
+
+    [Parameter, EditorRequired]
+    public CommentDTO? Comment { get; set; }
+
+    #endregion
+
+
+    #region state
+
+    // tinyMCE config
+    private static readonly Dictionary<string, object> editorConfig = new()
+    {
+        { "toolbar", "undo redo | bold italic underline | link codesample " },
+        { "plugins", "anchor autolink link charmap preview table codesample" },
+        { "default_link_target", "_blank" },
+        { "link_assume_external_targets", true },
+        { "link_context_toolbar", true },
+        { "codesample_languages", new object[] {
+                new { text = "HTML/XML", value = "markup" },
+                new { text = "JavaScript", value = "javascript" },
+                new { text = "CSS", value = "css" },
+                new { text = "C#", value = "csharp" },
+                new { text = "Razor", value = "razor" },
+                new { text = "JSON", value = "json" },
+    }
+        },
+        { "codesample_global_prismjs", true },
+        { "promotion", false },
+        { "height", "400px" },
+    };
+
+    #endregion
+
+
+    #region methods
+
+    private async Task HandleSubmit()
+    {
+        await OnSubmit.InvokeAsync(Comment);
+
+        Comment = new();
+    }
+
+    #endregion
+
+}

@@ -16,9 +16,9 @@ namespace BlazorBlog.Client.Services.Interfaces
 
         Task<PagedList<BlogPostDTO>> GetPublishedBlogPostsAsync(int page, int pageSize);
 
-        Task<IEnumerable<BlogPostDTO>> GetDraftedBlogPostsAsync();
+        Task<PagedList<BlogPostDTO>> GetDraftedBlogPostsAsync(int page, int pageSize);
 
-        Task<IEnumerable<BlogPostDTO>> GetDeletedBlogPostsAsync();
+        Task<PagedList<BlogPostDTO>> GetDeletedBlogPostsAsync(int page, int pageSize);
 
         Task<IEnumerable<BlogPostDTO>> GetPopularBlogPostsAsync(int count);
 
@@ -31,7 +31,7 @@ namespace BlazorBlog.Client.Services.Interfaces
 
         Task<IEnumerable<BlogPostDTO>> GetBlogPostsByCategoryIdAsync(int categoryId);
 
-        Task<IEnumerable<BlogPostDTO>> SearchBlogPostsAsync(string searchTerm);
+        Task<PagedList<BlogPostDTO>> SearchPublishedBlogPostsAsync(string searchTerm, int page, int pageSize);
 
         #endregion
 

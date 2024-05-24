@@ -64,18 +64,34 @@ namespace BlazorBlog.Services
             return dtos;
         }
 
-        public async Task<IEnumerable<BlogPostDTO>> GetDraftedBlogPostsAsync()
+        public async Task<PagedList<BlogPostDTO>> GetDraftedBlogPostsAsync(int page, int pageSize)
         {
-            IEnumerable<BlogPost> blogPosts = await repository.GetDraftedBlogPostsAsync();
+            PagedList<BlogPost> blogPosts = await repository.GetDraftedBlogPostsAsync(page, pageSize);
 
-            return blogPosts.Select(bp => bp.ToDTO());
+            PagedList<BlogPostDTO> dtos = new()
+            {
+                Page = blogPosts.Page,
+                TotalPages = blogPosts.TotalPages,
+                TotalItems = blogPosts.TotalItems,
+                Data = blogPosts.Data.Select(bp => bp.ToDTO()),
+            };
+
+            return dtos;
         }
 
-        public async Task<IEnumerable<BlogPostDTO>> GetDeletedBlogPostsAsync()
+        public async Task<PagedList<BlogPostDTO>> GetDeletedBlogPostsAsync(int page, int pageSize)
         {
-            IEnumerable<BlogPost> blogPosts = await repository.GetDeletedBlogPostsAsync();
+            PagedList<BlogPost> blogPosts = await repository.GetDeletedBlogPostsAsync(page, pageSize);
 
-            return blogPosts.Select(bp => bp.ToDTO());
+            PagedList<BlogPostDTO> dtos = new()
+            {
+                Page = blogPosts.Page,
+                TotalPages = blogPosts.TotalPages,
+                TotalItems = blogPosts.TotalItems,
+                Data = blogPosts.Data.Select(bp => bp.ToDTO()),
+            };
+
+            return dtos;
         }
 
         public async Task<IEnumerable<BlogPostDTO>> GetPopularBlogPostsAsync(int count)
@@ -109,11 +125,19 @@ namespace BlazorBlog.Services
             return blogPosts.Select(bp => bp.ToDTO());
         }
 
-        public async Task<IEnumerable<BlogPostDTO>> SearchBlogPostsAsync(string searchTerm)
+        public async Task<PagedList<BlogPostDTO>> SearchPublishedBlogPostsAsync(string searchTerm, int page, int pageSize)
         {
-            IEnumerable<BlogPost> blogPosts = await repository.SearchBlogPostsAsync(searchTerm);
+            PagedList<BlogPost> blogPosts = await repository.SearchPublishedBlogPostsAsync(searchTerm, page, pageSize);
 
-            return blogPosts.Select(bp => bp.ToDTO());
+            PagedList<BlogPostDTO> dtos = new()
+            {
+                Page = blogPosts.Page,
+                TotalPages = blogPosts.TotalPages,
+                TotalItems = blogPosts.TotalItems,
+                Data = blogPosts.Data.Select(bp => bp.ToDTO()),
+            };
+
+            return dtos;
         }
 
         #endregion

@@ -1,6 +1,7 @@
 ﻿using BlazorBlog.Client.Helpers;
 using BlazorBlog.Client.Models;
 using BlazorBlog.Data;
+using BlazorBlog.Helpers;
 using System.ComponentModel.DataAnnotations;
 
 namespace BlazorBlog.Models
@@ -57,6 +58,9 @@ namespace BlazorBlog.Models
                 Updated = comment.Updated,
                 UpdateDescription = comment.UpdateDescription,
                 BlogPostId = comment.BlogPostId,
+                AuthorId = comment.AppUserId,
+                AuthorName = comment.AppUser?.FullName,
+                AuthorImage = comment.AppUser?.ImageId.HasValue == true ? $"api/uploads/{comment.AppUser.ImageId}" : UploadHelper.DefaultProfilePicture,
             };
 
             return dto;

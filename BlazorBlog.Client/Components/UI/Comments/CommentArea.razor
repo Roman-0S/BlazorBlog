@@ -1,36 +1,187 @@
-﻿
+﻿@using BlazorBlog.Client.Helpers
 
+@inject ICommentDTOService CommentService
 
+@if (Comments is not null)
+{
 
+    @if ((Comments.Count() is 0))
+    {
+        <div class="pt-4 pt-xl-5 mt-4">
 
-<h3>CommentArea</h3>
+            <AuthorizeView>
 
-<button class="btn btn-primary" @onclick="() => count++">
-    Click Me
-</button>
+                <Authorized>
 
-<p>Clicked @count times</p>
+                    <h2>Leave a comment</h2>
+
+                    <CommentForm OnSubmit="HandleSubmit" />
+
+                </Authorized>
+
+                <NotAuthorized>
+
+                    <div class="d-flex justify-content-center mb-5">
+
+                        <a href="/Account/Login">Login</a>&nbsp;<span>to leave a comment</span>
+
+                    </div>
+
+                </NotAuthorized>
+
+            </AuthorizeView>
+
+            <div>
+
+                <h2 class="h1 py-lg-1 py-xl-3">No comments yet</h2>
+
+                <div class="d-flex justify-content-center align-items-center mt-5">
+
+                    <h4 class="text-secondary-emphasis bolder">Leave a comment!</h4>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    }
+    else
+    {
+
+        <!-- Comments -->
+        <div class="pt-4 pt-xl-5 mt-4">
+
+            <AuthorizeView>
+
+                <Authorized>
+
+                    <h2>Leave a comment</h2>
+
+                    <CommentForm OnSubmit="HandleSubmit" Comment="new CommentDTO()" />
+
+                </Authorized>
+
+                <NotAuthorized>
+
+                    <div class="d-flex justify-content-center mb-5">
+
+                        <a href="/Account/Login">Login</a>&nbsp;<span>to leave a comment</span>
+
+                    </div>
+
+                </NotAuthorized>
+
+            </AuthorizeView>
+
+            <h2 class="h1 py-lg-1 py-xl-3">@Comments.Count() comments</h2>
+
+            @foreach (CommentDTO comment in Comments)
+            {
+                <CommentCard Comment="comment" UserInfo="userInfo" OnDelete="HandleDelete" OnEdit="HandleEdit" />
+            }
+
+        </div>
+
+    }
+
+}
+
 
 
 
 @code {
     #region parameters
 
+    [CascadingParameter]
+    public Task<AuthenticationState>? AuthStateTask { get; set; }
 
+    [Parameter, EditorRequired]
+    public int BlogPostId { get; set; }
+
+    [Parameter, EditorRequired]
+    public IEnumerable<CommentDTO>? Comments { get; set; }
 
     #endregion
 
 
     #region state
 
-    private int count = 0;
+    private UserInfo? userInfo;
 
     #endregion
 
 
     #region methods
 
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            userInfo = await UserInfoHelper.GetUserInfoAsync(AuthStateTask);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            throw;
+        }
+    }
 
+    private async Task HandleSubmit(CommentDTO comment)
+    {
+        try
+        {
+
+            if (userInfo is not null)
+            {
+                comment.AuthorId = userInfo.UserId;
+                comment.AuthorName = userInfo.FullName;
+                comment.AuthorImage = userInfo.ProfilePictureUrl;
+                comment.BlogPostId = BlogPostId;
+
+                await CommentService.CreateCommentAsync(comment);
+
+                Comments = await CommentService.GetCommentsByBlogPostIdAsync(BlogPostId);
+            }
+
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            throw;
+        }
+    }
+
+    private async Task HandleDelete(int commentId)
+    {
+        try
+        {
+            await CommentService.DeleteCommentByIdAsync(commentId);
+
+            Comments = await CommentService.GetCommentsByBlogPostIdAsync(BlogPostId);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            throw;
+        }
+
+    }
+
+    private async Task HandleEdit(CommentDTO comment)
+    {
+        try
+        {
+            await CommentService.UpdateCommentAsync(comment);
+
+            Comments = await CommentService.GetCommentsByBlogPostIdAsync(BlogPostId);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            throw;
+        }
+    }
 
     #endregion
 

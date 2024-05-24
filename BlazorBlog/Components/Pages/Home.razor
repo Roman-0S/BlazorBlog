@@ -41,7 +41,7 @@
                 }
                 else
                 {
-                    <a href="?page=@(Page - 1)" class="btn btn-primary btn-sm rounded-pill disabled"><i class="ai ai-arrow-left"></i></a>
+                    <a href="?page=@(1)" class="btn btn-primary btn-sm rounded-pill disabled"><i class="ai ai-arrow-left"></i></a>
                 }
 
                 @if (Page < blogPosts.TotalPages)
@@ -50,7 +50,7 @@
                 }
                 else
                 {
-                    <a href="?page=@(Page + 1)" class="btn btn-primary btn-sm rounded-pill disabled"><i class="ai ai-arrow-right"></i></a>
+                    <a href="?page=@(blogPosts.TotalPages)" class="btn btn-primary btn-sm rounded-pill disabled"><i class="ai ai-arrow-right"></i></a>
                 }
 
             </div>
@@ -75,9 +75,7 @@
 
                     @for (int i = 2; i <= blogPosts.TotalPages; i++)
                     {
-                        Page = i;
-
-                        <li class="page-item"><a class="page-link" href="?page=@Page">@Page</a></li>
+                        <li class="page-item"><a class="page-link" href="?page=@i">@i</a></li>
                     }
 
                 </ul>

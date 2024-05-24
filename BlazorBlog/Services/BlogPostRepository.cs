@@ -37,28 +37,36 @@ namespace BlazorBlog.Services
             using ApplicationDbContext context = contextFactory.CreateDbContext();
 
             PagedList<BlogPost> blogPosts = await context.BlogPosts.Where(bp => bp.IsPublished && !bp.IsDeleted)
-                                                                     .Include(bp => bp.Category)
-                                                                     .Include(bp => bp.Comments)
-                                                                     .OrderByDescending(bp => bp.Created)
-                                                                     .ToPagedListAsync(page, pageSize);
+                                                                   .Include(bp => bp.Category)
+                                                                   .Include(bp => bp.Comments)
+                                                                   .OrderByDescending(bp => bp.Created)
+                                                                   .ToPagedListAsync(page, pageSize);
 
             return blogPosts;
         }
 
-        public async Task<IEnumerable<BlogPost>> GetDraftedBlogPostsAsync()
+        public async Task<PagedList<BlogPost>> GetDraftedBlogPostsAsync(int page, int pageSize)
         {
             using ApplicationDbContext context = contextFactory.CreateDbContext();
 
-            IEnumerable<BlogPost> blogPosts = await context.BlogPosts.Where(bp => !bp.IsPublished && !bp.IsDeleted).Include(bp => bp.Category).Include(bp => bp.Comments).ToListAsync();
+            PagedList<BlogPost> blogPosts = await context.BlogPosts.Where(bp => !bp.IsPublished && !bp.IsDeleted)
+                                                                   .Include(bp => bp.Category)
+                                                                   .Include(bp => bp.Comments)
+                                                                   .OrderByDescending(bp => bp.Created)
+                                                                   .ToPagedListAsync(page, pageSize);
 
             return blogPosts;
         }
 
-        public async Task<IEnumerable<BlogPost>> GetDeletedBlogPostsAsync()
+        public async Task<PagedList<BlogPost>> GetDeletedBlogPostsAsync(int page, int pageSize)
         {
             using ApplicationDbContext context = contextFactory.CreateDbContext();
 
-            IEnumerable<BlogPost> blogPosts = await context.BlogPosts.Where(bp => !bp.IsPublished && bp.IsDeleted).Include(bp => bp.Category).Include(bp => bp.Comments).ToListAsync();
+            PagedList<BlogPost> blogPosts = await context.BlogPosts.Where(bp => !bp.IsPublished && bp.IsDeleted)
+                                                                   .Include(bp => bp.Category)
+                                                                   .Include(bp => bp.Comments)
+                                                                   .OrderByDescending(bp => bp.Created)
+                                                                   .ToPagedListAsync(page, pageSize);
 
             return blogPosts;
         }
@@ -110,16 +118,19 @@ namespace BlazorBlog.Services
             return blogPosts;
         }
 
-        public async Task<IEnumerable<BlogPost>> SearchBlogPostsAsync(string searchTerm)
+        public async Task<PagedList<BlogPost>> SearchPublishedBlogPostsAsync(string searchTerm, int page, int pageSize)
         {
             using ApplicationDbContext context = contextFactory.CreateDbContext();
 
             string normalizedSearch = searchTerm.Trim().ToLower();
 
-            IEnumerable<BlogPost> blogPosts = await context.BlogPosts.Include(bp => bp.Category).Where(bp => string.IsNullOrEmpty(normalizedSearch)
+            PagedList<BlogPost> blogPosts = await context.BlogPosts.Include(bp => bp.Category).Where(bp => bp.IsPublished && !bp.IsDeleted)
+                                                                                                .Where(bp => string.IsNullOrEmpty(normalizedSearch)
                                                                                                           || bp.Title!.ToLower().Contains(normalizedSearch)
                                                                                                           || bp.Tags.Any(t => t.Name!.ToLower().Contains(normalizedSearch))
-                                                                                                          || bp.Category!.Name!.ToLower().Contains(normalizedSearch)).ToListAsync();
+                                                                                                          || bp.Category!.Name!.ToLower().Contains(normalizedSearch))
+                                                                                                .OrderByDescending(bp => bp.Created)
+                                                                                                .ToPagedListAsync(page, pageSize);
 
             return blogPosts;
         }
