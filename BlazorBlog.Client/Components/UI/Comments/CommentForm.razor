@@ -7,7 +7,7 @@
 
     <div>
 
-        <EditForm Model="Comment" OnValidSubmit="HandleSubmit">
+        <EditForm Context="FormContext" Model="Comment" OnValidSubmit="HandleSubmit">
 
             <DataAnnotationsValidator />
 
@@ -15,9 +15,15 @@
 
                 <TinyMCE.Blazor.Editor ScriptSrc="/tinymce/tinymce.min.js" @bind-Value="Comment.Content" Field="() => Comment.Content" ClassName="rich-text-editor" Conf="editorConfig"/>
 
-@*                 <InputTextArea @bind-Value="Comment.Content" />
- *@
                 <ValidationMessage For="() => Comment.Content" />
+
+                <AuthorizeView Roles="Author,Moderator">
+
+                    <label class="form-label" for="updateReason">Reason for update</label>
+
+                    <InputText @bind-Value="Comment.UpdateDescription" id="updateReason" />
+
+                </AuthorizeView>
 
                 <div class="text-end mt-3">
                     <button class="btn btn-sm btn-primary"><i class="ai ai-circle-check"></i></button>

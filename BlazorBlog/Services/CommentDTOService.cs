@@ -12,7 +12,7 @@ namespace BlazorBlog.Services
             Comment comment = new()
             {
                 Content = commentDTO.Content,
-                Created = DateTimeOffset.Now,
+                Created = DateTimeOffset.UtcNow,
                 AppUserId = commentDTO.AuthorId,
                 BlogPostId = commentDTO.BlogPostId,
             };
@@ -58,7 +58,7 @@ namespace BlazorBlog.Services
 
             if (commentToUpdate is not null)
             {
-                commentToUpdate.Updated = DateTimeOffset.Now;
+                commentToUpdate.Updated = DateTimeOffset.UtcNow;
                 commentToUpdate.Content = comment.Content;
                 commentToUpdate.UpdateDescription = comment.UpdateDescription;
 
