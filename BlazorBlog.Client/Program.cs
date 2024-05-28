@@ -1,4 +1,6 @@
 using BlazorBlog.Client;
+using BlazorBlog.Client.Services;
+using BlazorBlog.Client.Services.Interfaces;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 
@@ -11,6 +13,6 @@ builder.Services.AddSingleton<AuthenticationStateProvider, PersistentAuthenticat
 // add HttpClient as a service
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 
-
+builder.Services.AddScoped<ICommentDTOService, WASMCommentDTOService>();
 
 await builder.Build().RunAsync();
