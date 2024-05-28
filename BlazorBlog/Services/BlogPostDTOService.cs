@@ -125,6 +125,43 @@ namespace BlazorBlog.Services
             return blogPosts.Select(bp => bp.ToDTO());
         }
 
+        public async Task<PagedList<BlogPostDTO>> GetPostsByCategoryId(int categoryId, int page, int pageSize)
+        {
+            PagedList<BlogPost> blogPosts = await repository.GetPostsByCategoryId(categoryId, page, pageSize);
+
+            PagedList<BlogPostDTO> dtos = new PagedList<BlogPostDTO>()
+            {
+                Page = blogPosts.Page,
+                TotalPages = blogPosts.TotalPages,
+                TotalItems = blogPosts.TotalItems,
+                Data = blogPosts.Data.Select(bp => bp.ToDTO()),
+            };
+
+            return dtos;
+        }
+
+        public async Task<TagDTO?> GetTagByIdAsync(int tagId)
+        {
+            Tag? tag = await repository.GetTagByIdAsync(tagId);
+
+            return tag?.ToDTO();
+        }
+
+        public async Task<PagedList<BlogPostDTO>> GetPostsByTagIdAsync(int tagId, int page, int pageSize)
+        {
+            PagedList<BlogPost> blogPosts = await repository.GetPostsByTagIdAsync(tagId, page, pageSize);
+
+            PagedList<BlogPostDTO> dtos = new()
+            {
+                Page = blogPosts.Page,
+                TotalPages = blogPosts.TotalPages,
+                TotalItems = blogPosts.TotalItems,
+                Data = blogPosts.Data.Select(bp => bp.ToDTO()),
+            };
+
+            return dtos;
+        }
+
         public async Task<PagedList<BlogPostDTO>> SearchPublishedBlogPostsAsync(string searchTerm, int page, int pageSize)
         {
             PagedList<BlogPost> blogPosts = await repository.SearchPublishedBlogPostsAsync(searchTerm, page, pageSize);

@@ -103,8 +103,18 @@ else
         </div>
     </div>
 
+    <AuthorizeView>
 
-    <CommentArea @rendermode="InteractiveAuto" BlogPostId="blogPost.Id" Comments="blogPost.Comments"/>
+        <Authorized>
+            <CommentArea @rendermode="InteractiveAuto" BlogPostId="blogPost.Id" Comments="blogPost.Comments" />
+        </Authorized>
+
+        <NotAuthorized>
+            <CommentArea BlogPostId="blogPost.Id" Comments="blogPost.Comments" />
+        </NotAuthorized>
+
+    </AuthorizeView>
+
 
 }
 

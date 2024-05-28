@@ -26,15 +26,25 @@ namespace BlazorBlog.Controllers
         [AllowAnonymous]
         public async Task<ActionResult<IEnumerable<CommentDTO>>> GetCommentsByBlogPostId([FromRoute] int blogId)
         {
-            if (blogId is not 0)
+            try
             {
-                IEnumerable<CommentDTO> comments = await _commentService.GetCommentsByBlogPostIdAsync(blogId);
 
-                return Ok(comments);
+                if (blogId is not 0)
+                {
+                    IEnumerable<CommentDTO> comments = await _commentService.GetCommentsByBlogPostIdAsync(blogId);
+
+                    return Ok(comments);
+                }
+                else
+                {
+                    return BadRequest();
+                }
+
             }
-            else
+            catch (Exception ex)
             {
-                return BadRequest();
+                Console.WriteLine(ex);
+                throw;
             }
         }
 
@@ -43,15 +53,26 @@ namespace BlazorBlog.Controllers
         [AllowAnonymous]
         public async Task<ActionResult<CommentDTO>> GetCommentById([FromRoute] int commentId)
         {
-            CommentDTO? comment = await _commentService.GetCommentByIdAsync(commentId);
 
-            if (comment is not null)
+            try
             {
-                return Ok(comment);
+
+                CommentDTO? comment = await _commentService.GetCommentByIdAsync(commentId);
+
+                if (comment is not null)
+                {
+                    return Ok(comment);
+                }
+                else
+                {
+                    return NotFound();
+                }
+
             }
-            else
+            catch (Exception ex)
             {
-                return NotFound();
+                Console.WriteLine(ex);
+                throw;
             }
         }
 
@@ -59,38 +80,60 @@ namespace BlazorBlog.Controllers
         [HttpPost]
         public async Task<ActionResult<CommentDTO>> CreateComment([FromBody] CommentDTO comment)
         {
-            comment.AuthorId = _userId;
 
-            CommentDTO createdComment = await _commentService.CreateCommentAsync(comment);
+            try
+            {
 
-            return Ok(createdComment);
+                comment.AuthorId = _userId;
+
+                CommentDTO createdComment = await _commentService.CreateCommentAsync(comment);
+
+                return Ok(createdComment);
+
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                throw;
+            }
         }
 
 
         [HttpPut("{commentId:int}")]
         public async Task<ActionResult<CommentDTO>> UpdateComment([FromRoute] int commentId, [FromBody] CommentDTO commentDTO)
         {
-            bool inAuthorRole = User.IsInRole("Author");
-            bool inModeratorRole = User.IsInRole("Moderator");
 
-            CommentDTO? commentToUpdate = await _commentService.GetCommentByIdAsync(commentId);
-
-            if (commentToUpdate is not null)
+            try
             {
-                if (inAuthorRole || inModeratorRole || commentToUpdate?.AuthorId == _userId)
-                {
-                    await _commentService.UpdateCommentAsync(commentDTO);
 
-                    return Ok();
+                bool inAuthorRole = User.IsInRole("Author");
+                bool inModeratorRole = User.IsInRole("Moderator");
+
+                CommentDTO? commentToUpdate = await _commentService.GetCommentByIdAsync(commentId);
+
+                if (commentToUpdate is not null)
+                {
+                    if (inAuthorRole || inModeratorRole || commentToUpdate.AuthorId == _userId)
+                    {
+                        await _commentService.UpdateCommentAsync(commentDTO);
+
+                        return Ok();
+                    }
+                    else
+                    {
+                        return BadRequest();
+                    }
                 }
                 else
                 {
-                    return BadRequest();
+                    return Problem();
                 }
+
             }
-            else
+            catch (Exception ex)
             {
-                return Problem();
+                Console.WriteLine(ex);
+                throw;
             }
         }
 
@@ -98,27 +141,38 @@ namespace BlazorBlog.Controllers
         [HttpDelete("{commentId:int}")]
         public async Task<IActionResult> DeleteComment([FromRoute] int commentId)
         {
-            bool inAuthorRole = User.IsInRole("Author");
-            bool inModeratorRole = User.IsInRole("Moderator");
 
-            CommentDTO? comment = await _commentService.GetCommentByIdAsync(commentId);
-
-            if (comment is not null)
+            try
             {
-                if (inAuthorRole || inModeratorRole || comment?.AuthorId == _userId)
-                {
-                    await _commentService.DeleteCommentByIdAsync(commentId);
 
-                    return NoContent();
+                bool inAuthorRole = User.IsInRole("Author");
+                bool inModeratorRole = User.IsInRole("Moderator");
+
+                CommentDTO? comment = await _commentService.GetCommentByIdAsync(commentId);
+
+                if (comment is not null)
+                {
+                    if (inAuthorRole || inModeratorRole || comment.AuthorId == _userId)
+                    {
+                        await _commentService.DeleteCommentByIdAsync(commentId);
+
+                        return NoContent();
+                    }
+                    else
+                    {
+                        return BadRequest();
+                    }
                 }
                 else
                 {
-                    return BadRequest();
+                    return NotFound();
                 }
+
             }
-            else
+            catch (Exception ex)
             {
-                return NotFound();
+                Console.WriteLine(ex);
+                throw;
             }
         }
 

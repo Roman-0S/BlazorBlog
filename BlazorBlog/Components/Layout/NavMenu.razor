@@ -1,6 +1,9 @@
-﻿@implements IDisposable
+﻿@using BlazorBlog.Client.Models
+@using BlazorBlog.Client.Services.Interfaces
+@implements IDisposable
 
 @inject NavigationManager NavigationManager
+@inject ICategoryDTOService CategoryService
 
 <header class="navbar navbar-expand-lg fixed-top bg-light">
     <div class="container">
@@ -35,12 +38,10 @@
 
                     <ul class="dropdown-menu">
 
-                        <li><a class="dropdown-item" href="#">Category 1</a></li>
-
-                        <li><a class="dropdown-item" href="#">Category 2</a></li>
-
-                        <li><a class="dropdown-item" href="#">Category 3</a></li>
-
+                        @foreach (CategoryDTO category in categories)
+                        {
+                            <li><a class="dropdown-item" href="/category/@category.Id">@category.Name</a></li>
+                        }
 
                     </ul>
 
@@ -128,11 +129,17 @@
 
 @code {
     private string? currentUrl;
+    private IEnumerable<CategoryDTO> categories = [];
 
     protected override void OnInitialized()
     {
         currentUrl = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
         NavigationManager.LocationChanged += OnLocationChanged;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        categories = await CategoryService.GetCategoriesAsync();
     }
 
     private void OnLocationChanged(object? sender, LocationChangedEventArgs e)

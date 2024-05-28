@@ -32,6 +32,12 @@ namespace BlazorBlog.Services.Interfaces
 
         Task<IEnumerable<BlogPost>> GetBlogPostsByCategoryIdAsync(int categoryId);
 
+        Task<PagedList<BlogPost>> GetPostsByCategoryId(int categoryId, int page, int pageSize);
+
+        Task<Tag?> GetTagByIdAsync(int tagId);
+
+        Task<PagedList<BlogPost>> GetPostsByTagIdAsync(int tagId, int page, int pageSize);
+
         Task<PagedList<BlogPost>> SearchPublishedBlogPostsAsync(string searchTerm, int page, int pageSize);
 
         #endregion

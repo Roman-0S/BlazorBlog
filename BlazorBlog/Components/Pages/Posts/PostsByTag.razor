@@ -1,0 +1,142 @@
+﻿@page "/tag/{tagId:int}"
+@layout SidebarLayout
+
+
+@using BlazorBlog.Client.Components.UI.Blog
+@using BlazorBlog.Client.Models
+@using BlazorBlog.Client.Services.Interfaces
+@using BlazorBlog.Components.Layout
+
+@inject IBlogPostDTOService BlogService
+@inject NavigationManager Nav
+
+
+@if (tag is not null)
+{
+
+    <PageTitle>BlazorBlog | Tag : @tag.Name</PageTitle>
+
+    <div>
+
+        <h1 class="pb-3 pb-lg-4">Tag: @tag.Name</h1>
+
+        <div>
+
+            @foreach (BlogPostDTO blogPost in blogPosts.Data)
+            {
+                <BlogPostCard BlogPost="blogPost" />
+            }
+
+        </div>
+
+
+        <!-- Pagination -->
+        <div class="row gy-3 align-items-center mt-lg-5 pt-2 pt-md-4 pt-lg-0">
+
+            <div class="col col-md-4 col-6 order-md-1 order-1">
+
+                <div class="hstack gap-2">
+
+                    @if (Page > 1)
+                    {
+                        <a href="/tag/@tag.Id?page=@(Page - 1)" class="btn btn-primary btn-sm rounded-pill"><i class="ai ai-arrow-left"></i></a>
+                    }
+                    else
+                    {
+                        <a href="/tag/@tag.Id?page=@(1)" class="btn btn-primary btn-sm rounded-pill disabled"><i class="ai ai-arrow-left"></i></a>
+                    }
+
+                    @if (Page < blogPosts.TotalPages)
+                    {
+                        <a href="/tag/@tag.Id?page=@(Page + 1)" class="btn btn-primary btn-sm rounded-pill"><i class="ai ai-arrow-right"></i></a>
+                    }
+                    else
+                    {
+                        <a href="/tag/@tag.Id?page=@(blogPosts.TotalPages)" class="btn btn-primary btn-sm rounded-pill disabled"><i class="ai ai-arrow-right"></i></a>
+                    }
+
+                </div>
+
+            </div>
+
+            <div class="col col-md-4 col-12 order-md-2 order-3 text-center">
+                Page @blogPosts.Page of @blogPosts.TotalPages
+            </div>
+
+            <div class="col col-md-4 col-6 order-md-3 order-2">
+
+                <nav aria-label="Page navigation">
+
+                    <ul class="pagination pagination-sm justify-content-end">
+
+                        <li class="page-item" aria-current="page">
+
+                            <a class="page-link" href="?page=1">1</a>
+
+                        </li>
+
+                        @for (int i = 2; i <= blogPosts.TotalPages; i++)
+                        {
+                            <li class="page-item"><a class="page-link" href="/tag/@tag.Id?page=@i">@i</a></li>
+                        }
+
+                    </ul>
+
+                </nav>
+
+            </div>
+
+        </div>
+
+    </div>
+
+}
+
+
+
+@code {
+
+    #region parameters
+
+    [Parameter]
+    public int TagId { get; set; }
+
+    [SupplyParameterFromQuery]
+    public int Page { get; set; }
+
+    #endregion
+
+
+    #region state
+
+    private PagedList<BlogPostDTO> blogPosts = new();
+
+    private TagDTO? tag;
+
+    private int pageSize = 5;
+
+    #endregion
+
+
+    #region methods
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (Page < 1)
+        {
+            Page = 1;
+        }
+
+        tag = await BlogService.GetTagByIdAsync(TagId);
+
+        if (tag is null)
+        {
+            Nav.NavigateTo("/");
+        }
+
+        blogPosts = await BlogService.GetPostsByTagIdAsync(TagId, Page, pageSize);
+    }
+
+    #endregion
+
+}
