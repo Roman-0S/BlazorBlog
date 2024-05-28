@@ -20,27 +20,15 @@
 
                             <h6 class="mb-0">@Comment.AuthorName</h6>
 
-                            <div class="hstack gap-2">
 
-                                @if ((Comment.Created.Hour - DateTimeOffset.UtcNow.Hour) == 0)
-                                {
-                                    <span class="fs-sm text-body-secondary">@(int.Parse(DateTimeOffset.UtcNow.ToLocalTime().ToString("mm")) - int.Parse(Comment.Created.ToLocalTime().ToString("mm"))) minutes ago</span>
-                                }
-                                else
-                                {
-                                    <span class="fs-sm text-body-secondary">@Comment.Created.ToLocalTime().ToString("g")</span>
-                                }
-
-                                
-
-                                @if (Comment.Updated.ToLocalTime().ToString("g") != "1/1/0001 12:00 AM")
-                                {
-                                    <span class="fs-sm text-body-secondary">@Comment.Updated.ToLocalTime().ToString("g")</span>
-                                }
-
-                            </div>
-
-
+                            @if ((Comment.Created.Hour - DateTimeOffset.UtcNow.Hour) == 0)
+                            {
+                                <span class="fs-sm text-body-secondary">@(int.Parse(DateTimeOffset.UtcNow.ToLocalTime().ToString("mm")) - int.Parse(Comment.Created.ToLocalTime().ToString("mm"))) minutes ago</span>
+                            }
+                            else
+                            {
+                                <span class="fs-sm text-body-secondary">@Comment.Created.ToLocalTime().ToString("g")</span>
+                            }
 
                         </div>
 
@@ -48,13 +36,41 @@
 
                     <p class="pb-2 mb-0">@((MarkupString)Comment.Content!)</p>
 
-                    <div class="hstack justify-content-end gap-2">
+                    <div class="hstack justify-content-between">
 
-                        <button class="btn btn-sm btn-primary" @onclick="() => status = Status.Editing"><i class="ai ai-pencil"></i></button>
+                        <div>
 
-                        <button class="btn btn-sm btn-outline-danger" @onclick="() => status = Status.Deleting"><i class="ai ai-cross-alt"></i></button>
+
+                            @if (Comment.Updated.ToLocalTime().ToString("g") != "1/1/0001 12:00 AM")
+                            {
+                                <p class="m-0 fs-lg">Updated:</p>
+
+                                <span class="fs-sm text-body-secondary">@Comment.Updated.ToLocalTime().ToString("g")</span>
+                            }
+
+                        </div>
+
+                        <div class="hstack justify-content-end gap-2">
+
+                            <button class="btn btn-sm btn-primary" @onclick="() => status = Status.Editing"><i class="ai ai-pencil"></i></button>
+
+                            <button class="btn btn-sm btn-outline-danger" @onclick="() => status = Status.Deleting"><i class="ai ai-cross-alt"></i></button>
+
+                        </div>
 
                     </div>
+
+                    <div class="mt-2">
+
+                        @if (!string.IsNullOrEmpty(Comment.UpdateDescription))
+                        {                            
+                            <p class="mb-1 fs-lg">Moderator Update Reason:</p>
+
+                            <span>@Comment.UpdateDescription</span>
+                        }
+
+                    </div>
+
 
                 </div>
 
