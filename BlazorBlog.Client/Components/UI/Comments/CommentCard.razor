@@ -33,7 +33,7 @@
 
                                 
 
-                                @if (!string.IsNullOrEmpty(Comment.Updated.ToLocalTime().ToString("g")))
+                                @if (Comment.Updated.ToLocalTime().ToString("g") != "1/1/0001 12:00 AM")
                                 {
                                     <span class="fs-sm text-body-secondary">@Comment.Updated.ToLocalTime().ToString("g")</span>
                                 }
@@ -72,7 +72,25 @@
 
                             <h6 class="mb-0">@Comment.AuthorName</h6>
 
-                            <span class="fs-sm text-body-secondary">@Comment.Created</span>
+                            <div class="hstack gap-2">
+
+                                @if ((Comment.Created.Hour - DateTimeOffset.UtcNow.Hour) == 0)
+                                {
+                                    <span class="fs-sm text-body-secondary">@(int.Parse(DateTimeOffset.UtcNow.ToLocalTime().ToString("mm")) - int.Parse(Comment.Created.ToLocalTime().ToString("mm"))) minutes ago</span>
+                                }
+                                else
+                                {
+                                    <span class="fs-sm text-body-secondary">@Comment.Created.ToLocalTime().ToString("g")</span>
+                                }
+
+
+
+                                @if (Comment.Updated.ToLocalTime().ToString("g") != "1/1/0001 12:00 AM")
+                                {
+                                    <span class="fs-sm text-body-secondary">@Comment.Updated.ToLocalTime().ToString("g")</span>
+                                }
+
+                            </div>
 
                         </div>
 
@@ -96,7 +114,23 @@
 
                             <h6 class="mb-0">@Comment.AuthorName</h6>
 
-                            <span class="fs-sm text-body-secondary">@Comment.Created</span>
+                            <div class="hstack gap-2">
+
+                                @if ((Comment.Created.Hour - DateTimeOffset.UtcNow.Hour) == 0)
+                                {
+                                    <span class="fs-sm text-body-secondary">@(int.Parse(DateTimeOffset.UtcNow.ToLocalTime().ToString("mm")) - int.Parse(Comment.Created.ToLocalTime().ToString("mm"))) minutes ago</span>
+                                }
+                                else
+                                {
+                                    <span class="fs-sm text-body-secondary">@Comment.Created.ToLocalTime().ToString("g")</span>
+                                }
+
+                                @if (Comment.Updated.ToLocalTime().ToString("g") != "1/1/0001 12:00 AM")
+                                {
+                                    <span class="fs-sm text-body-secondary">@Comment.Updated.ToLocalTime().ToString("g")</span>
+                                }
+
+                            </div>
 
                         </div>
 
@@ -130,7 +164,23 @@
 
                         <h6 class="mb-0">@Comment.AuthorName</h6>
 
-                        <span class="fs-sm text-body-secondary">@Comment.Created</span>
+                        <div class="hstack gap-2">
+
+                            @if ((Comment.Created.Hour - DateTimeOffset.UtcNow.Hour) == 0)
+                            {
+                                <span class="fs-sm text-body-secondary">@(int.Parse(DateTimeOffset.UtcNow.ToLocalTime().ToString("mm")) - int.Parse(Comment.Created.ToLocalTime().ToString("mm"))) minutes ago</span>
+                            }
+                            else
+                            {
+                                <span class="fs-sm text-body-secondary">@Comment.Created.ToLocalTime().ToString("g")</span>
+                            }
+
+                            @if (Comment.Updated.ToLocalTime().ToString("g") != "1/1/0001 12:00 AM")
+                            {
+                                <span class="fs-sm text-body-secondary">@Comment.Updated.ToLocalTime().ToString("g")</span>
+                            }
+
+                        </div>
 
                     </div>
 
@@ -156,7 +206,23 @@
 
                     <h6 class="mb-0">@Comment.AuthorName</h6>
 
-                    <span class="fs-sm text-body-secondary">@Comment.Created</span>
+                    <div class="hstack gap-2">
+
+                        @if ((Comment.Created.Hour - DateTimeOffset.UtcNow.Hour) == 0)
+                        {
+                            <span class="fs-sm text-body-secondary">@(int.Parse(DateTimeOffset.UtcNow.ToLocalTime().ToString("mm")) - int.Parse(Comment.Created.ToLocalTime().ToString("mm"))) minutes ago</span>
+                        }
+                        else
+                        {
+                            <span class="fs-sm text-body-secondary">@Comment.Created.ToLocalTime().ToString("g")</span>
+                        }
+
+                        @if (Comment.Updated.ToLocalTime().ToString("g") != "1/1/0001 12:00 AM")
+                        {
+                            <span class="fs-sm text-body-secondary">@Comment.Updated.ToLocalTime().ToString("g")</span>
+                        }
+
+                    </div>
 
                 </div>
 
