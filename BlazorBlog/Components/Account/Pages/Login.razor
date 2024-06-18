@@ -1,6 +1,8 @@
 ﻿@page "/Account/Login"
+@layout SignInLayout
 
 @using System.ComponentModel.DataAnnotations
+@using BlazorBlog.Components.Layout
 @using Microsoft.AspNetCore.Authentication
 @using Microsoft.AspNetCore.Identity
 @using BlazorBlog.Data
@@ -12,57 +14,174 @@
 
 <PageTitle>Log in</PageTitle>
 
-<h1>Log in</h1>
-<div class="row">
-    <div class="col-md-4">
-        <section>
+<div class="d-lg-flex position-relative h-100">
+
+    <!-- Home button -->
+    <a class="text-nav btn btn-icon bg-light border rounded-circle position-absolute top-0 end-0 p-0 mt-3 me-3 mt-sm-4 me-sm-4" href="/" data-bs-toggle="tooltip" data-bs-placement="left" title="Back to home" aria-label="Back to home">
+        <i class="ai-home"></i>
+    </a>
+
+    <!-- Sign in form -->
+    <div class="d-flex flex-column align-items-center w-lg-50 h-100 px-3 px-lg-5 pt-5">
+
+        <div class="w-100 mt-auto" style="max-width: 526px;">
+
+            <h1>Sign in to Tech Log</h1>
+
+            <p class="pb-3 mb-3 mb-lg-4">Don't have an account yet?&nbsp;&nbsp;<a href="@(NavigationManager.GetUriWithQueryParameters("Account/Register", new Dictionary<string, object?> { ["ReturnUrl"] = ReturnUrl }))">Register here!</a></p>
+
             <StatusMessage Message="@errorMessage" />
-            <EditForm Model="Input" method="post" OnValidSubmit="LoginUser" FormName="login">
+            <EditForm Model="Input" method="post" OnValidSubmit="LoginUser" FormName="login" class="needs-validation" novalidate>
                 <DataAnnotationsValidator />
-                <h2>Use a local account to log in.</h2>
-                <hr />
+
                 <ValidationSummary class="text-danger" role="alert" />
-                <div class="form-floating mb-3">
-                    <InputText @bind-Value="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
-                    <label for="email" class="form-label">Email</label>
+
+                <div class="form-floating pb-3 mb-3">
+                    <div class="position-relative">
+                        <i class="ai-mail fs-lg position-absolute top-50 start-0 translate-middle-y ms-3"></i>
+                        <InputText @bind-Value="Input.Email" class="form-control form-control-lg ps-5" autocomplete="username" aria-required="true" type="email" placeholder="Email address" required />
+                    </div>
                     <ValidationMessage For="() => Input.Email" class="text-danger" />
                 </div>
-                <div class="form-floating mb-3">
-                    <InputText type="password" @bind-Value="Input.Password" class="form-control" autocomplete="current-password" aria-required="true" placeholder="password" />
-                    <label for="password" class="form-label">Password</label>
+                <div class="form-floating mb-4">
+                    <div class="position-relative">
+                        <i class="ai-lock-closed fs-lg position-absolute top-50 start-0 translate-middle-y ms-3"></i>
+                        <InputText @bind-Value="Input.Password" class="form-control form-control-lg ps-5" autocomplete="current-password" type="password" placeholder="Password" required />
+                    </div>
                     <ValidationMessage For="() => Input.Password" class="text-danger" />
                 </div>
-                <div class="checkbox mb-3">
-                    <label class="form-label">
-                        <InputCheckbox @bind-Value="Input.RememberMe" class="darker-border-checkbox form-check-input" />
-                        Remember me
-                    </label>
+                <div class="d-flex flex-wrap align-items-center justify-content-between pb-4">
+                    <div class="form-check my-1">
+                        <InputCheckbox @bind-Value="Input.RememberMe" class="form-check-input" type="checkbox" id="keep-signedin" />
+                        <label class="form-check-label ms-1" for="keep-signedin">Keep me signed in</label>
+                    </div>
+
+                    <div class="dropdown mb-2">
+
+                        <button class="btn btn-light dropdown-toggle w-100" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Trouble signing in?
+                        </button>
+
+                        <ul class="dropdown-menu">
+
+                            <li><a class="dropdown-item" href="Account/ForgotPassword">Forgot Password</a></li>
+
+                            <li><a class="dropdown-item" href="Account/ResendEmailConfirmation">Resend Email Confirmation</a></li>
+
+                        </ul>
+
+                    </div>
+
                 </div>
-                <div>
-                    <button type="submit" class="w-100 btn btn-lg btn-primary">Log in</button>
-                </div>
-                <div>
-                    <p>
-                        <a href="Account/ForgotPassword">Forgot your password?</a>
-                    </p>
-                    <p>
-                        <a href="@(NavigationManager.GetUriWithQueryParameters("Account/Register", new Dictionary<string, object?> { ["ReturnUrl"] = ReturnUrl }))">Register as a new user</a>
-                    </p>
-                    <p>
-                        <a href="Account/ResendEmailConfirmation">Resend email confirmation</a>
-                    </p>
-                </div>
+                <button class="btn btn-lg btn-primary w-100 mb-4" type="submit">Sign in</button>
+
             </EditForm>
-        </section>
+
+        </div>
+
+        <!-- Copyright -->
+        <p class="nav w-100 fs-sm pt-5 mt-auto mb-5" style="max-width: 526px;"><span class="text-body-secondary">&copy; All rights reserved. Made by</span><a class="nav-link d-inline-block p-0 ms-1" href="https://rs-developer-portfolio.netlify.app/" target="_blank" rel="noopener">Roman Steele</a></p>
     </div>
-    <div class="col-md-6 col-md-offset-2">
-        <section>
-            <h3>Use another service to log in.</h3>
-            <hr />
-            <ExternalLoginPicker />
-        </section>
-    </div>
+
+
+    <!-- Cover image -->
+    <div class="w-50 bg-size-cover bg-repeat-0 bg-position-center" style="background-image: url(img/pexels-ekaterina-bolovtsova-4680236.jpg);"></div>
 </div>
+
+
+@* <div class="text-center h-100">
+
+    <div class="row h-100 align-items-center">
+
+        <div class="col-3"></div>
+
+        <div class="col-12 col-md-6">
+
+            <section>
+
+                <div class="card">
+
+                    <div class="card-header py-3">
+
+                        Tech Log
+
+                    </div>
+
+                    <div class="card-body">
+
+                        <StatusMessage Message="@errorMessage" />
+                        <EditForm Model="Input" method="post" OnValidSubmit="LoginUser" FormName="login">
+                            <DataAnnotationsValidator />
+                            <h5>Log in to continue</h5>
+                            <hr />
+                            <ValidationSummary class="text-danger" role="alert" />
+                            <div class="form-floating mb-3">
+                                <InputText @bind-Value="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
+                                <label for="email" class="form-label">Email</label>
+                                <ValidationMessage For="() => Input.Email" class="text-danger" />
+                            </div>
+                            <div class="form-floating mb-3">
+                                <InputText type="password" @bind-Value="Input.Password" class="form-control" autocomplete="current-password" aria-required="true" placeholder="password" />
+                                <label for="password" class="form-label">Password</label>
+                                <ValidationMessage For="() => Input.Password" class="text-danger" />
+                            </div>
+                            <div class="checkbox mb-3 text-start">
+                                <label class="form-label">
+                                    <InputCheckbox @bind-Value="Input.RememberMe" class="darker-border-checkbox form-check-input" />
+                                    Remember me
+                                </label>
+                            </div>
+                            <div>
+                                <button type="submit" class="w-100 btn btn-lg btn-primary">Log in</button>
+                            </div>
+                        </EditForm>
+
+                        <hr />
+
+                        <div class="row">
+
+                            <div class="col-12 col-md-6">
+
+                                <div class="dropdown mb-2">
+
+                                    <button class="btn btn-light dropdown-toggle w-100" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        Trouble signing in?
+                                    </button>
+
+                                    <ul class="dropdown-menu">
+
+                                        <li><a class="dropdown-item" href="Account/ForgotPassword">Forgot Password</a></li>
+
+                                        <li><a class="dropdown-item" href="Account/ResendEmailConfirmation">Resend Email Confirmation</a></li>
+
+                                    </ul>
+
+                                </div>
+
+                            </div>
+
+                            <div class="col-12 col-md-6">
+
+                                <a class="btn btn-light w-100" href="@(NavigationManager.GetUriWithQueryParameters("Account/Register", new Dictionary<string, object?> { ["ReturnUrl"] = ReturnUrl }))">
+                                    Register
+                                </a>
+
+                            </div>
+
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+        </div>
+
+    </div>
+
+</div>
+ *@
 
 @code {
     private string? errorMessage;

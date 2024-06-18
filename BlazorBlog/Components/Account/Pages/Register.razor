@@ -1,9 +1,11 @@
 ﻿@page "/Account/Register"
+@layout SignInLayout
 
 @using System.ComponentModel.DataAnnotations
 @using System.Text
 @using System.Text.Encodings.Web
 @using BlazorBlog.Client.Helpers
+@using BlazorBlog.Components.Layout
 @using Microsoft.AspNetCore.Identity
 @using Microsoft.AspNetCore.WebUtilities
 @using BlazorBlog.Data
@@ -21,7 +23,87 @@
 
 <PageTitle>Register</PageTitle>
 
-<h1>Register</h1>
+
+<div class="d-lg-flex position-relative h-100">
+
+    <!-- Home button -->
+    <a class="text-nav btn btn-icon bg-light border rounded-circle position-absolute top-0 end-0 p-0 mt-3 me-3 mt-sm-4 me-sm-4" href="/" data-bs-toggle="tooltip" data-bs-placement="left" title="Back to home" aria-label="Back to home">
+        <i class="ai-home"></i>
+    </a>
+
+    <!-- Sign up form -->
+    <div class="d-flex flex-column align-items-center w-lg-50 h-100 px-3 px-lg-5 pt-5">
+
+        <div class="w-100 mt-auto" style="max-width: 526px;">
+
+            <h1>No account? Sign up</h1>
+
+            <p class="pb-3 mb-3 mb-lg-4">Have an account already?&nbsp;&nbsp;<a href="Account/Login">Sign in here!</a></p>
+
+            <StatusMessage Message="@Message" />
+            <EditForm Model="Input" asp-route-returnUrl="@ReturnUrl" method="post" OnValidSubmit="RegisterUser" FormName="register" enctype="multipart/form-data" class="needs-validation" novalidate>
+
+                <DataAnnotationsValidator />
+
+                <ValidationSummary class="text-danger" role="alert" />
+
+                <div class="row row-cols-1 row-cols-sm-2">
+                    <div class="col mb-4">
+                        <InputText @bind-Value="Input.FirstName" autocomplete="firstName" aria-required="true" class="form-control form-control-lg" type="text" placeholder="First Name" required />
+                        <ValidationMessage For="() => Input.FirstName" class="text-danger" />
+                    </div>
+                    <div class="col mb-4">
+                        <InputText @bind-Value="Input.LastName" autocomplete="lastName" aria-required="true" class="form-control form-control-lg" type="text" placeholder="Last Name" required />
+                        <ValidationMessage For="() => Input.LastName" class="text-danger" />
+                    </div>
+                </div>
+
+                <div class="mb-4">
+
+                    <InputText @bind-Value="Input.Email" autocomplete="username" aria-required="true" class="form-control form-control-lg" type="email" placeholder="Email address" required />
+                    <ValidationMessage For="() => Input.Email" class="text-danger" />
+
+                </div>
+
+                <div class="mb-4">
+                    <InputText @bind-Value="Input.Password" autocomplete="new-password" aria-required="true" class="form-control form-control-lg" type="password" placeholder="Password" required />
+                    <ValidationMessage For="() => Input.Password" class="text-danger" />
+                </div>
+                <div class="mb-4">
+                    <InputText @bind-Value="Input.ConfirmPassword" autocomplete="new-password" aria-required="true" class="form-control form-control-lg" type="password" placeholder="Confirm password" required />
+                    <ValidationMessage For="() => Input.ConfirmPassword" class="text-danger" />
+                </div>
+                
+                <div class="mb-3 row">
+                    <div class="col-md-3 text-center overflow-hidden">
+                        <img src="@UploadHelper.DefaultProfilePicture" class="img-fluid" id="imagePreview" height="80" />
+                    </div>
+                    <div class="col-md-9 text-start">
+
+                        <label class="form-label" for="image">Profile Picture</label>
+                        <input type="file" class="form-control" accept=".jpg,.jpeg,.png,.svg,.gif" name="Input.ProfilePicture"
+                               onchange="document.getElementById('imagePreview').src = window.URL.createObjectURL(this.files[0])" />
+
+                    </div>
+                </div>
+
+                <button class="btn btn-lg btn-primary w-100 mb-4" type="submit">Sign up</button>
+
+            </EditForm>
+        </div>
+
+        <!-- Copyright -->
+        <p class="nav w-100 fs-sm pt-5 mt-auto mb-5" style="max-width: 526px;"><span class="text-body-secondary">&copy; All rights reserved. Made by</span><a class="nav-link d-inline-block p-0 ms-1" href="https://rs-developer-portfolio.netlify.app/" target="_blank" rel="noopener">Roman Steele</a></p>
+    </div>
+
+
+    <!-- Cover image -->
+    <div class="w-50 bg-size-cover bg-repeat-0 bg-position-center" style="background-image: url(img/pexels-ekaterina-bolovtsova-4680236.jpg);"></div>
+</div>
+
+
+
+@* <h1>Register</h1>
 
 <div class="row">
     <div class="col-md-4">
@@ -72,14 +154,7 @@
             <button type="submit" class="w-100 btn btn-lg btn-primary">Register</button>
         </EditForm>
     </div>
-    <div class="col-md-6 col-md-offset-2">
-        <section>
-            <h3>Use another service to register.</h3>
-            <hr />
-            <ExternalLoginPicker />
-        </section>
-    </div>
-</div>
+</div> *@
 
 @code {
     private IEnumerable<IdentityError>? identityErrors;
