@@ -12,7 +12,7 @@ namespace BlazorBlog.Data
         public static string GetConnectionString(IConfiguration configuration)
         {
             var connectionString = configuration.GetConnectionString("DefaultConnection");  // Local Connection string
-            var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_PRIVATE_URL");  // Remote connection string
+            var databaseUrl = Environment.GetEnvironmentVariable("DATABASE_URL");  // Remote connection string
 
             return string.IsNullOrEmpty(databaseUrl) ? connectionString! : BuildConnectionString(databaseUrl);
         }
